@@ -1,2 +1,2 @@
 # shared-images
-shared images for mapcolnies project
+shared images for mapcolonies project
