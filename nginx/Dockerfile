@@ -11,5 +11,7 @@ EXPOSE 8080
 # comment user directive as master process is run as user in OpenShift anyhow
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 
+RUN chmod -R g=u /etc/nginx/conf.d 
+
 RUN addgroup nginx root
 USER nginx
