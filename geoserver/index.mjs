@@ -1,0 +1,37 @@
+#!/usr/bin/env zx
+
+const {
+    GEOSERVER_VERSION,
+    IMAGE_DOCKER_REGISTRY,
+    IMAGE_REPO,
+    WORK_DIR = '/tmp/geoserver',
+    KARTOZA_DOCKER_IMAGE_GIT_URL = 'https://github.com/kartoza/docker-geoserver'
+} = process.env;
+try {
+    const imageName = `${IMAGE_REPO}:${GEOSERVER_VERSION}`;
+    const tempGeoserverBaseImageName = `geoserver-base:${GEOSERVER_VERSION}`;
+    const kartozaDockerfilePath = `${WORK_DIR}/Dockerfile`;
+
+    await $`git clone ${KARTOZA_DOCKER_IMAGE_GIT_URL} ${WORK_DIR}`;
+    console.log(chalk.blue('Cloned Kartoza Geoserver Git Repo'));
+    await $`sed -i '/^VOLUME.*/ d' ${kartozaDockerfilePath}`;
+    console.log(chalk.blue('Removed VOLUME declaration'));
+    await $`docker build -q --build-arg GS_VERSION=${GEOSERVER_VERSION} -f ${kartozaDockerfilePath} -t ${tempGeoserverBaseImageName} ${WORK_DIR}`;
+    console.log(chalk.blue('Build Kartoza Modified GeoServer Image'));
+    await $`docker build -q --build-arg GEOSERVER_BASE_IMAGE=${tempGeoserverBaseImageName} -f Dockerfile  -t ${imageName} .`;
+    console.log(chalk.blue('Builds Openshift ready Geoserver Image'));
+
+    console.log(IMAGE_DOCKER_REGISTRY);
+    if (IMAGE_DOCKER_REGISTRY) {
+        const taggedImageName = `${IMAGE_DOCKER_REGISTRY}/${imageName}`;
+        await $`docker tag ${imageName} ${taggedImageName}`;
+        console.log(chalk.blue(`Tagged Docker Image as ${taggedImageName}`));
+    }
+    console.log(chalk.magenta('We did it boys!! 🐧🐧🐧🐧'));
+
+} catch(e) {
+    console.log(chalk.red('Oh no! 😢'));
+    console.error(e);
+} finally {
+    await $`rm -rf ${WORK_DIR}`;
+}

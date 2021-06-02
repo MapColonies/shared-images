@@ -1,0 +1,22 @@
+{
+  "name": "build-geoserver-openshift",
+  "version": "1.0.0",
+  "description": "this project builds a geoserver openshift ready image",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "geoserver",
+    "zx",
+    "openshift"
+  ],
+  "author": "Daniel Hermon",
+  "license": "ISC",
+  "dependencies": {
+    "zx": "^1.14.1"
+  }
+}
