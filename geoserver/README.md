@@ -1,4 +1,4 @@
-# GeoServer Openshift Compatabile Image
+# GeoServer Openshift Compatible Image
 
 ## Why?
 
@@ -33,3 +33,16 @@ npx zx index.mjs
 | WORK_DIR                     | /tmp/geoserver                              | the folder where the script clones the kartoza/geoserver git repo | no         |
 | KARTOZA_DOCKER_IMAGE_GIT_URL | https://github.com/kartoza/docker-geoserver | The https url of the git repo                                     | no         |
 | IMAGE_DOCKER_REGISTRY        |                                             | If set it will tag image with the registry prefix                 | no         |
+| POSTGRES_ENABLE_SSL_AUTH     |                                             | If set it will load postgres ssl auth certs to the required location    | no   |
+| POSTGRES_CERTS_MOUNT_PATH    |                                             | The location where the postgres certs are mounted                 |            |
+
+## Postgres SSL authentication
+
+The required file in order to connect to postgres using ssl mode are as follows:
+- `postgresql.crt`
+- `postgresql.pk8`
+- `root.ca`
+
+To convert a standard private key to PKCS8 you can use the following openssl command:
+
+`openssl pkcs8 -topk8 -inform PEM -outform DER -in postgresql.key -out postgresql.pk8 -nocrypt`
