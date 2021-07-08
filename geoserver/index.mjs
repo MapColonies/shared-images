@@ -7,8 +7,11 @@ const {
     WORK_DIR = '/tmp/geoserver',
     KARTOZA_DOCKER_IMAGE_GIT_URL = 'https://github.com/kartoza/docker-geoserver'
 } = process.env;
+
+
 try {
-    const imageName = `${IMAGE_REPO}:${GEOSERVER_VERSION}`;
+    const packageVersion = await require('./package.json').version;
+    const imageName = `${IMAGE_REPO}:v${packageVersion}-${GEOSERVER_VERSION}`;
     const tempGeoserverBaseImageName = `geoserver-base:${GEOSERVER_VERSION}`;
     const kartozaDockerfilePath = `${WORK_DIR}/Dockerfile`;
 
