@@ -15,7 +15,7 @@ therefore we cant change the owner of the folder to the random generated user wh
 
 ## Run the script
 
-**DON'T FORGET TO RUN **
+**DON'T FORGET TO RUN**
 ```sh
 npm i
 ```
