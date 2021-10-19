@@ -14,3 +14,7 @@ outputs to `/etc/nginx/conf.d/default.conf` like this:
 	listen       80;
 ```
 for more information: https://github.com/docker-library/docs/tree/master/nginx#using-environment-variables-in-nginx-configuration-new-in-119
+configure ENV OTEL_EXPORTER_OTLP_ENDPOINT to the opentelemetry endpoint 
+
+for more information:
+https://github.com/open-telemetry/opentelemetry-cpp-contrib/tree/main/instrumentation/nginx 
