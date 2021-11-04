@@ -35,6 +35,8 @@ npx zx index.mjs
 | IMAGE_DOCKER_REGISTRY        |                                             | If set it will tag image with the registry prefix                 | no         |
 | POSTGRES_ENABLE_SSL_AUTH     |                                             | If set it will load postgres ssl auth certs to the required location    | no   |
 | POSTGRES_CERTS_MOUNT_PATH    |                                             | The location where the postgres certs are mounted                 |            |
+| ADD_ROOT_CERTS | | enable adding certs to geoserver
+| ROOT_CERTS_PATH | | path to load the certs from
 
 ## Postgres SSL authentication
 
