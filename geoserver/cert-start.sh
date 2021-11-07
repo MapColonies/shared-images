@@ -8,5 +8,17 @@ then
   chmod 400 $POSTGRES_CERTIFICATES_PATH/*.pk8
 fi
 
-/scripts/entrypoint.sh
 
+if [ "$ADD_ROOT_CERTS" = "true" ]
+then
+  FILES="${ROOT_CERTS_PATH}/*"
+  for f in $FILES
+  do
+    keytool -import -noprompt -file $f -keystore mystore -alias $f -storepass changeit
+  done
+
+  export JAVA_OPTS="${JAVA_OPTS} -Djavax.net.ssl.trustStore=mystore -Djavax.net.ssl.trustStorePassword=changeit"
+fi
+
+
+/scripts/entrypoint.sh
