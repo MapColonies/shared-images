@@ -1,0 +1,61 @@
+# Name of the image tu pull from registry
+image: nginx-s3-gateway-oss-base:v1.0.0
+
+ingress:
+  enabled: false
+
+  path: "/nginx-s3-gateway/"
+  host: "minikube.local"
+
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.org/mergeable-ingress-type: "minion"
+    nginx.org/rewrites: "serviceName={{ .Release.Name }}-{{ .Chart.Name }}-service rewrite=/"
+
+deployment:
+  pod:
+    annotations:
+      co.elastic.logs/enabled: 'true'
+      co.elastic.logs/module: 'nginx'
+      co.elastic.logs/fileset.stdout: 'access'
+      co.elastic.logs/fileset.stderr: 'error'
+      co.elastic.metrics/module: 'nginx'
+      co.elastic.metrics/metricsets: 'stubstatus'
+      co.elastic.metrics/hosts: '${data.host}:8080/nginx_status'
+      co.elastic.metrics/period: '10s'
+
+s3:
+  host: "10.8.1.13"
+  port: "9000"
+  accessId: "raster"
+  secretKey: "rasterPassword"
+
+route:
+  enabled: false
+
+  annotations:
+    haproxy.router.openshift.io/rewrite-target: "/"
+
+authentication:
+  opa:
+    enabled: false
+    customHeaderName: 'x-api-key'
+
+ports:
+  deployment: 8080
+  nginx:
+    port: 80
+    nginxTargetPort: 8080
+  opa: 
+    port: 9191
+  envoy: 
+    port: 8081
+
+opa:
+  image: openpolicyagent/opa
+  imageTag: 0.29.4-envoy-3
+
+envoy:
+  image: envoyproxy/envoy
+  imageTag: v1.18.3
+  maxRequestBytes: 8192

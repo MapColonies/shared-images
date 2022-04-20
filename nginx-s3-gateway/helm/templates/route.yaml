@@ -1,0 +1,14 @@
+{{ if and .Values.route.enabled (not .Values.ingress.enabled) -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $.Release.Name }}-{{ .Chart.Name }}-route
+  annotations:
+  {{- range $key, $val := .Values.route.annotations }}
+    {{ $key }}: {{ tpl $val $ }}
+  {{- end }}
+spec:
+  to:
+    kind: Service
+    name: {{ $.Release.Name }}-{{ .Chart.Name }}-service
+{{ end }}
