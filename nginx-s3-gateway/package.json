@@ -1,0 +1,23 @@
+{
+  "name": "build-nginx-s3-gateway-openshift",
+  "version": "1.0.0",
+  "description": "this project builds a nginx s3 gateway openshift ready image",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nginx",
+    "s3",
+    "zx",
+    "openshift"
+  ],
+  "author": "Ella Martirosyan",
+  "license": "ISC",
+  "dependencies": {
+    "zx": "^1.14.1"
+  }
+}
