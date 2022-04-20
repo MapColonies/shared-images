@@ -1,0 +1,17 @@
+{{ $targetPort := ternary .Values.ports.envoy.port .Values.ports.nginx.nginxTargetPort .Values.authentication.opa.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-service
+spec:
+  selector:
+    podName: {{ .Release.Name }}-{{ .Chart.Name }}-pod
+  ports:
+  - protocol: TCP
+    port: {{ .Values.ports.nginx.port }}
+    {{ if .Values.authentication.opa.enabled }}
+    targetPort: {{ .Values.ports.envoy.port }}
+    {{ else }}
+    targetPort: {{ .Values.ports.nginx.nginxTargetPort }}
+    {{ end }}

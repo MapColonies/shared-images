@@ -1,0 +1,37 @@
+{{- define "nginx-s3-gateway.envoy-container" }}
+        - name: envoy
+          image: envoyproxy/envoy:v1.18.3
+          volumeMounts:
+          - readOnly: true
+            mountPath: /config
+            name: proxy-config
+          args:
+          - "envoy"
+          - "--config-path"
+          - "/config/envoy.yaml"
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.envoy.port }}
+              protocol: TCP
+            - name: admin
+              containerPort: 8001
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /ready
+          #     port: {{ .Values.ports.envoy }}
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /ready
+          #     port: {{ .Values.ports.envoy }}
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+{{- end }}
+
+{{- define "nginx-s3-gateway.envoy-volumes" }}
+      - name: proxy-config
+        configMap:
+          name: {{ .Release.Name }}-{{ .Chart.Name }}-envoy
+{{- end }}

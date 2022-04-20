@@ -1,0 +1,35 @@
+{{- define "nginx-s3-gateway.opa-container" }}
+        - name: opa
+          image: openpolicyagent/opa:0.29.4-envoy-3
+          volumeMounts:
+          - readOnly: true
+            mountPath: /policy
+            name: opa-policy
+          args:
+          - "run"
+          - "--server"
+          - "--addr=0.0.0.0:8181"
+          - "--diagnostic-addr=0.0.0.0:8282"
+          - "--set=plugins.envoy_ext_authz_grpc.add=:{{ .Values.ports.opa.port }}"
+          - "--set=plugins.envoy_ext_authz_grpc.path=envoy/authz/allow"
+          - "--set=decision_logs.console=true"
+          - "/policy/policy.rego"
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health?plugins=true
+          #     port: 8282
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health?plugins=true
+          #     port: 8282
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+{{- end }}
+
+{{- define "nginx-s3-gateway.opa-volumes" }}
+      - name: opa-policy
+        secret:
+          secretName: {{ .Release.Name }}-{{ .Chart.Name }}-opa
+{{- end }}
