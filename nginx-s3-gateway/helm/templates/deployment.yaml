@@ -18,19 +18,13 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-{{ .Chart.Name }}-container
-          env:
-          - name: S3_HOST
-            value: {{ tpl .Values.s3.host . | quote }}
-          - name: S3_PORT
-            value: {{ tpl .Values.s3.port . | quote }}
-          - name: S3_ACCESS_ID
-            value: {{ tpl .Values.s3.accessId . | quote }}
-          - name: S3_SECRET_KEY
-            value: {{ tpl .Values.s3.secretKey . | quote }}
           image: {{ .Values.image }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
           - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-{{ .Chart.Name }}-configmap
         {{- if .Values.authentication.opa.enabled }}
         {{- template "nginx-s3-gateway.envoy-container" . }}
         {{- template "nginx-s3-gateway.opa-container" . }}
