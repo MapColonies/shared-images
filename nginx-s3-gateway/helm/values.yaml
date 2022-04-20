@@ -1,5 +1,6 @@
 # Name of the image tu pull from registry
-image: nginx-s3-gateway-oss-base:v1.0.0
+enabled: true
+image: localhost:5001/nginx-s3-gateway-oss-base:v1.0.0
 
 ingress:
   enabled: false
@@ -11,6 +12,9 @@ ingress:
     kubernetes.io/ingress.class: "nginx"
     nginx.org/mergeable-ingress-type: "minion"
     nginx.org/rewrites: "serviceName={{ .Release.Name }}-{{ .Chart.Name }}-service rewrite=/"
+
+global: 
+  allowDirectoryList: false
 
 deployment:
   pod:
@@ -25,10 +29,20 @@ deployment:
       co.elastic.metrics/period: '10s'
 
 s3:
-  host: "10.8.1.13"
-  port: "9000"
-  accessId: "raster"
+  bucketName: "3dtiles"
+  accessKeyId: "raster"
   secretKey: "rasterPassword"
+  server: "10.8.1.13"
+  serverPort: "9000"
+  serverProto: "http"
+  region: "us-east-1"
+  style: "path"
+  debug: true
+  sigsVersion: "4"
+  allowDirectoryList: false
+
+aws:
+  sigsVersion: "4"
 
 route:
   enabled: false
