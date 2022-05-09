@@ -18,6 +18,7 @@ therefore we need to change the port and remove the user.
 **DON'T FORGET TO RUN**
 ```sh
 npm i
+nvm use 16
 ```
 
 Running the script
@@ -38,4 +39,4 @@ npx zx index.mjs
 
 ## Installation
 
-Use this helm: https://github.com/MapColonies/nginx-s3-gateway-helm
+Use this helm: [nginx-s3-gateway-helm](https://github.com/MapColonies/nginx-s3-gateway-helm)
