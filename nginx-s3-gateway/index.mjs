@@ -29,16 +29,15 @@ try {
     // await $`git checkout ${NGINX_S3_GATEWAY_COMMIT_ID}`;
     await $`git reset --hard ${NGINX_S3_GATEWAY_COMMIT_ID}`;
   } else {
-    let commitShaId = await $`git rev-parse --short HEAD`;
-    commitShaId = commitShaId.toString().trim();
+    const commitShaId = (await $`git rev-parse --short HEAD`).toString().trim();
     imageName = `${imageName}-${commitShaId}`;
   }
   console.log(chalk.blue(`Cloned OK!`));
   console.log(chalk.blue(`\nModify local repo:`));
   await $`sed -i 's/server {/server {\\n    listen ${PORT};/' ${defaultConfTemplatePath}`;
   console.log(chalk.blue(`Added 'listen ${PORT};' declaration`));
-  // await $`sed -i 's/user  nginx;/# user  nginx;/' ${nginxConfPath}`;
-  // console.log(chalk.blue(`Commented out 'user nginx;' declaration`));
+  await $`sed -i 's/user  nginx;/# user  nginx;/' ${nginxConfPath}`;
+  console.log(chalk.blue(`Commented out 'user nginx;' declaration`));
   console.log(chalk.blue(`\nBuild modified nginx image:`));
   await $`docker build -q -f ${nginxDockerfilePath} -t ${imageName} ${WORK_DIR}`;
   console.log(chalk.blue(`Docker image '${imageName}' is READY!`));
