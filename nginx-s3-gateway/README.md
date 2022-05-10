@@ -27,15 +27,15 @@ npx zx index.mjs
 ```
 
 ## Configurable options
-| ENV                      | Default Value                                    | Description                                                 | mandatory? |
-|--------------------------|--------------------------------------------------|-------------------------------------------------------------|------------|
-| IMAGE_TAG                |                                                  | The version of the image                                    | yes        |
-| IMAGE_REPO               |                                                  | The name of the image                                       | yes        |
-| NGINX_S3_GATEWAY_COMMIT  |                                                  | The `nginxinc/nginx-s3-gateway` version                     | no         |
-| IMAGE_DOCKER_REGISTRY    |                                                  | If set it will tag image with registry prefix               | no         |
-| NGINX_S3_GATEWAY_GIT_URL | https://github.com/nginxinc/nginx-s3-gateway.git | The https url of the git repo                               | no         |
-| PORT                     | 8080                                             | Nginx port number                                           | no         |
-| WORK_DIR                 | /tmp/nginx-s3-gateway                            | The folder where the script temporarily clones the git repo | no         |
+| ENV                        | Default Value                                    | Description                                                  | mandatory? |
+|----------------------------|--------------------------------------------------|--------------------------------------------------------------|------------|
+| IMAGE_TAG                  |                                                  | The version of the image                                     | yes        |
+| IMAGE_REPO                 |                                                  | The name of the image                                        | yes        |
+| NGINX_S3_GATEWAY_COMMIT_ID |                                                  | A specific `nginxinc/nginx-s3-gateway` short commit id (SHA) | no         |
+| IMAGE_DOCKER_REGISTRY      |                                                  | If set it will tag image with registry prefix                | no         |
+| NGINX_S3_GATEWAY_GIT_URL   | https://github.com/nginxinc/nginx-s3-gateway.git | The https url of the git repo                                | no         |
+| PORT                       | 8080                                             | Nginx port number                                            | no         |
+| WORK_DIR                   | /tmp/nginx-s3-gateway                            | The folder where the script temporarily clones the git repo  | no         |
 
 ## Installation
 
