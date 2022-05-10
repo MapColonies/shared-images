@@ -15,6 +15,7 @@ const {
 
 try {
   
+  const HOME_DIR = await $`pwd`;
   const packageVersion = await require('./package.json').version;
   let imageName = `${IMAGE_REPO}:v${IMAGE_TAG || packageVersion}`;
   const nginxDockerfilePath = `${WORK_DIR}/Dockerfile.oss`;
@@ -38,6 +39,9 @@ try {
   console.log(chalk.blue(`Added 'listen ${PORT};' declaration`));
   await $`sed -i 's/user  nginx;/# user  nginx;/' ${nginxConfPath}`;
   console.log(chalk.blue(`Commented out 'user nginx;' declaration`));
+  await $`cp ${HOME_DIR}/05-chmod-for-filesystem.sh ${WORK_DIR}/common/docker-entrypoint.d/.`;
+  await $`sed -i 's/00-check-for-required-env/*/' ${nginxDockerfilePath}`;
+  await $`sed -i 's/00-check-for-required-env.sh//' ${nginxDockerfilePath}`;
   console.log(chalk.blue(`\nBuild modified nginx image:`));
   await $`docker build -q -f ${nginxDockerfilePath} -t ${imageName} ${WORK_DIR}`;
   console.log(chalk.blue(`Docker image '${imageName}' is READY!`));
