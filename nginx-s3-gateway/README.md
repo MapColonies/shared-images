@@ -1,36 +1,25 @@
-# Nginx-s3-gateway Openshift Compatible Image
+# nginx-s3-gateway Openshift Compatible Image
+
+Configuring `nginxinc/nginx-s3-gateway` image to act as an authenticating and caching gateway for read-only requests (GET/HEAD) to the S3 API.
 
 ## Why?
 
-`Nginxinc/nginx-s3-gateway` image is listening on port 80 and runs with user nginx,
-therefore we need to change the port and remove the user.
-
-## What does the script do?
-
-1. Clones `nginxinc/nginx-s3-gateway` git repo (configurable)
-2. Adds `listen 3001` command
-3. Builds the image
-3. Removes `user nginx`
-4. Builds the openshift compatible image
-5. **OPTIONAL** tag image
+* Providing an authentication gateway using an alternative authentication system to S3
+* Caching frequently accessed S3 objects for lower latency delivery and protection against S3 outages
+* For internal/micro services that can't authenticate against the S3 API (e.g. don't have libraries available) the gateway can provide a means to accessing S3 objects without authentication
+* Compressing objects (gzip, brotli) from gateway to end user
+* Protecting S3 bucket from arbitrary public access and traversal
+* Rate limiting S3 objects
+* Protecting a S3 bucket with a WAF
+* Serving static assets from a S3 bucket alongside a dynamic application endpoints all in a single RESTful directory structure
 
 ## Run
 
-**DON'T FORGET TO RUN**
-```sh
-npm i
+```
+docker build -t nginx-s3-gateway:v1.0.0 .
+docker tag nginx-s3-gateway:v1.0.0 <prefix>/nginx-s3-gateway:v1.0.0
 ```
 
-Running the script
-```
-npx zx index.mjs
-```
+## Installation
 
-## Configurable options
-| ENV                                   | Default Value                                    | Description                                     | mandatory? |
-|---------------------------------------|--------------------------------------------------|-------------------------------------------------|------------|
-| IMAGE_REPO                            |                                                  | The name of the image                           | yes        |
-| NGINX_S3_GATEWAY_VERSION              |                                                  | The `nginxinc/nginx-s3-gateway` version         | yes        |
-| WORK_DIR                              | /tmp/nginx-s3-gateway                            | The folder where the script clones the git repo | no         |
-| NGINX_S3_GATEWAY_DOCKER_IMAGE_GIT_URL | https://github.com/nginxinc/nginx-s3-gateway.git | The https url of the git repo                   | no         |
-| IMAGE_DOCKER_REGISTRY                 |                                                  | If set it will tag image with registry prefix   | no         |
+See: [nginx-s3-gateway-helm](https://github.com/MapColonies/nginx-s3-gateway-helm)
