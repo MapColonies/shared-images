@@ -23,7 +23,7 @@ js_set $s3auth s3gateway.s3auth;
 js_set $s3uri s3gateway.s3uri;
 
 server {
-    listen ${PORT};
+    listen ${LISTEN_ON_PORT};
     include /etc/nginx/conf.d/gateway/server_variables.conf;
 
     # Don't display the NGINX version number because we don't want to reveal
