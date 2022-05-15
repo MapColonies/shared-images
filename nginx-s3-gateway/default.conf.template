@@ -62,6 +62,12 @@ server {
     }
 
     location / {
+        if ($request_method = OPTIONS ) {
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 200;
+        }
+
         # Redirect to the proper location based on the client request - either
         # @s3, @s3Listing or @error405.
 
