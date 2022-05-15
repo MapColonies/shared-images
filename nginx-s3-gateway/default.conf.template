@@ -62,8 +62,11 @@ server {
     }
 
     location / {
+        add_header Access-Control-Allow-Origin '*';
+        add_header Access-Control-Allow-Headers 'x-api-key';
         if ($request_method = OPTIONS ) {
             add_header Access-Control-Allow-Origin '*';
+            add_header Access-Control-Allow-Headers 'x-api-key';
             add_header Access-Control-Allow-Methods 'GET, HEAD, OPTIONS';
             add_header Content-Type text/plain;
             add_header Content-Length 0;
@@ -83,7 +86,7 @@ server {
 
         # Don't allow any headers from the client - we don't want them messing
         # with S3 at all.
-        proxy_pass_request_headers off;
+        # proxy_pass_request_headers off;
 
         # Set the Authorization header to the AWS Signatures credentials
         proxy_set_header Authorization $s3auth;
@@ -117,7 +120,7 @@ server {
 
         # Don't allow any headers from the client - we don't want them messing
         # with S3 at all.
-        proxy_pass_request_headers off;
+        # proxy_pass_request_headers off;
 
         # Set the Authorization header to the AWS Signatures credentials
         proxy_set_header Authorization $s3auth;
