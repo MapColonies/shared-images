@@ -17,8 +17,6 @@ try {
 
     await $`git clone ${KARTOZA_DOCKER_IMAGE_GIT_URL} ${WORK_DIR}`;
     console.log(chalk.blue('Cloned Kartoza Geoserver Git Repo'));
-    await $`sed -i '/^VOLUME.*/ d' ${kartozaDockerfilePath}`;
-    console.log(chalk.blue('Removed VOLUME declaration'));
     await $`docker build -q --build-arg GS_VERSION=${GEOSERVER_VERSION} -f ${kartozaDockerfilePath} -t ${tempGeoserverBaseImageName} ${WORK_DIR}`;
     console.log(chalk.blue('Build Kartoza Modified GeoServer Image'));
     await $`docker build -q --build-arg GEOSERVER_BASE_IMAGE=${tempGeoserverBaseImageName} -f Dockerfile  -t ${imageName} .`;
@@ -30,7 +28,7 @@ try {
         await $`docker tag ${imageName} ${taggedImageName}`;
         console.log(chalk.blue(`Tagged Docker Image as ${taggedImageName}`));
     }
-    console.log(chalk.magenta('We did it boys!! 🐧🐧🐧🐧'));
+    console.log(chalk.magenta('We did it!! 🐧🐧🐧🐧🐧'));
 
 } catch(e) {
     console.log(chalk.red('Oh no! 😢'));
