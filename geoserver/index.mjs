@@ -28,7 +28,7 @@ try {
         await $`docker tag ${imageName} ${taggedImageName}`;
         console.log(chalk.blue(`Tagged Docker Image as ${taggedImageName}`));
     }
-    console.log(chalk.magenta('We did it boys!! 🐧🐧🐧🐧'));
+    console.log(chalk.magenta('We did it!! 🐧🐧🐧🐧🐧'));
 
 } catch(e) {
     console.log(chalk.red('Oh no! 😢'));
