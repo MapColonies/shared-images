@@ -31,12 +31,12 @@ npx zx index.mjs
 | IMAGE_REPO                   |                                             | The name of the docker image                                        | yes        |
 | GEOSERVER_VERSION            |                                             | The `kartoza/geoserver` version                                     | yes        |
 | WORK_DIR                     | /tmp/geoserver                              | The folder where the script clones the `kartoza/geoserver` git repo | no         |
-| KARTOZA_DOCKER_IMAGE_GIT_URL | https://github.com/kartoza/docker-geoserver | The https url of the git repo                                       | no         |
 | IMAGE_DOCKER_REGISTRY        |                                             | If set it will tag image with the registry prefix                   | no         |
 | POSTGRES_ENABLE_SSL_AUTH     |                                             | If set it will load postgres ssl auth certs to the required location| no         |
 | POSTGRES_CERTS_MOUNT_PATH    |                                             | The location where the postgres certs are mounted                   |            |
 | ADD_ROOT_CERTS | | enable adding certs to geoserver
 | ROOT_CERTS_PATH | | path to load the certs from
+| TELEMETRY_TRACING_ENABLED||set to true if you want the app to be traced
 
 ## Postgres SSL authentication
 

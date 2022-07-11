@@ -17,6 +17,6 @@
   "author": "Daniel Hermon",
   "license": "ISC",
   "dependencies": {
-    "zx": "^1.14.1"
+    "zx": "^7.0.7"
   }
 }
