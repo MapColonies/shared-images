@@ -8,6 +8,11 @@ then
   chmod 400 $POSTGRES_CERTIFICATES_PATH/*.pk8
 fi
 
+if [ "$TELEMETRY_TRACING_ENABLED" = "true" ]
+then
+  export JAVA_OPTS="${JAVA_OPTS} -javaagent:/otel/opentelemetry-javaagent.jar"
+fi
+
 
 if [ "$ADD_ROOT_CERTS" = "true" ]
 then

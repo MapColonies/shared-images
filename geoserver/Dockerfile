@@ -2,7 +2,13 @@ ARG GEOSERVER_BASE_IMAGE
 
 FROM ${GEOSERVER_BASE_IMAGE}
 
+ARG OTEL_VERSION
+
+ENV OTEL_SERVICE_NAME=geoserver
+
 USER root
+
+RUN wget --directory-prefix=/otel https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/${OTEL_VERSION}/opentelemetry-javaagent.jar
 
 RUN chgrp -R 0 ${CATALINA_HOME} ${FOOTPRINTS_DATA_DIR} \
     ${GEOSERVER_DATA_DIR} /scripts ${CERT_DIR} ${FONTS_DIR} /tmp/ /home/geoserveruser/ /community_plugins/ \
