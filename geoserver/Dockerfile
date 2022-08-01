@@ -8,7 +8,8 @@ ENV OTEL_SERVICE_NAME=geoserver
 
 USER root
 
-RUN wget --directory-prefix=/otel https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/${OTEL_VERSION}/opentelemetry-javaagent.jar
+RUN wget --directory-prefix=/otel https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/${OTEL_VERSION}/opentelemetry-javaagent.jar \
+    && wget --directory-prefix=${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib https://search.maven.org/remotecontent?filepath=org/apache/logging/log4j/log4j-layout-template-json/2.17.0/log4j-layout-template-json-2.17.0.jar
 
 RUN chgrp -R 0 ${CATALINA_HOME} ${FOOTPRINTS_DATA_DIR} \
     ${GEOSERVER_DATA_DIR} /scripts ${CERT_DIR} ${FONTS_DIR} /tmp/ /home/geoserveruser/ /community_plugins/ \
