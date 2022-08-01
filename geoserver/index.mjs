@@ -6,6 +6,7 @@ const {
   IMAGE_REPO,
   WORK_DIR = '/tmp/geoserver',
   OTEL_VERSION = 'v1.15.0',
+  LOG4J_VERSION = '2.17.2',
 } = process.env;
 
 try {
@@ -13,7 +14,7 @@ try {
   const imageName = `${IMAGE_REPO}:v${packageVersion}-${GEOSERVER_VERSION}`;
   const geoserverBaseImageName = `kartoza/geoserver:${GEOSERVER_VERSION}`;
 
-  await $`docker build -q --build-arg OTEL_VERSION=${OTEL_VERSION} --build-arg GEOSERVER_BASE_IMAGE=${geoserverBaseImageName} -f Dockerfile -t ${imageName} .`;
+  await $`docker build -q --build-arg OTEL_VERSION=${OTEL_VERSION} --build-arg LOG4J_VERSION=${LOG4J_VERSION} --build-arg GEOSERVER_BASE_IMAGE=${geoserverBaseImageName} -f Dockerfile -t ${imageName} .`;
 
   console.log(chalk.blue('Builds Openshift ready Geoserver Image'));
   console.log(IMAGE_DOCKER_REGISTRY);
