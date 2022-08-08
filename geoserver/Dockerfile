@@ -14,5 +14,6 @@ RUN chmod -R g=u ${CATALINA_HOME} ${FOOTPRINTS_DATA_DIR} \
 RUN mkdir /.postgresql && chmod g+w /.postgresql
 
 COPY cert-start.sh /scripts/cert-start.sh
+COPY cors-token-header.sh /scripts/cors-token-header.sh
 
-CMD ["/bin/bash", "/scripts/cert-start.sh"]
+CMD ["/bin/bash", "/scripts/cors-token-header.sh", "/scripts/cert-start.sh"]

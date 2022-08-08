@@ -1,6 +1,6 @@
 {
   "name": "build-geoserver-openshift",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "this project builds a geoserver openshift ready image",
   "main": "index.js",
   "engines": {
