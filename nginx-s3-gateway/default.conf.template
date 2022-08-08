@@ -25,7 +25,6 @@ js_set $s3uri s3gateway.s3uri;
 server {
     listen ${LISTEN_ON_PORT};
     include /etc/nginx/conf.d/gateway/server_variables.conf;
-    proxy_hide_header Access-Control-Allow-Origin;
     add_header Access-Control-Allow-Origin '$http_origin';
 
     # Don't display the NGINX version number because we don't want to reveal
@@ -64,11 +63,8 @@ server {
     }
 
     location / {
-        proxy_hide_header Access-Control-Allow-Origin;
-        add_header Access-Control-Allow-Origin '$http_origin';
         add_header Access-Control-Allow-Headers 'x-api-key';
         if ($request_method = OPTIONS ) {
-            proxy_hide_header Access-Control-Allow-Origin;
             add_header Access-Control-Allow-Origin '$http_origin';
             add_header Access-Control-Allow-Headers 'x-api-key';
             add_header Access-Control-Allow-Methods 'GET, HEAD, OPTIONS';
