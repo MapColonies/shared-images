@@ -63,10 +63,8 @@ server {
     }
 
     location / {
-        # add_header Access-Control-Allow-Origin $http_origin;
         add_header Access-Control-Allow-Headers 'x-api-key';
         if ($request_method = OPTIONS ) {
-            # add_header Access-Control-Allow-Origin $http_origin;
             add_header Access-Control-Allow-Headers 'x-api-key';
             add_header Access-Control-Allow-Methods 'GET, HEAD, OPTIONS';
             add_header Content-Type text/plain;
