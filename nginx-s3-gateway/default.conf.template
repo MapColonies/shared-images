@@ -65,6 +65,7 @@ server {
 
     location = /liveness {
         add_header Content-Type application/json;
+        access_log off;
         return 200 '{"status":"UP"}';
     }
 
