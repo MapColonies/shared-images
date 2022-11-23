@@ -25,8 +25,9 @@ js_set $s3uri s3gateway.s3uri;
 server {
     listen ${LISTEN_ON_PORT};
     include /etc/nginx/conf.d/gateway/server_variables.conf;
-    # Uncomment the next row for in-net deployment
-    # add_header Access-Control-Allow-Origin $http_origin;
+    
+    add_header Access-Control-Allow-Origin $ALLOWED_ORIGIN;
+
 
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
