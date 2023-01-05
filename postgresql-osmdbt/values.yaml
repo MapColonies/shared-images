@@ -1,0 +1,23 @@
+image:
+  registry: docker.io
+  repository: postgresql-osmdbt
+  tag: '0.0.1'
+
+primary:
+  extendedConfiguration: | 
+    wal_level=logical
+    max_replication_slots=1
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+
+volumePermissions:
+  enabled: false
+  securityContext:
+    runAsUser: "auto"
+
+
+shmVolume:
+  chmod:
+    enabled: false
