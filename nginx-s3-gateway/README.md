@@ -16,8 +16,7 @@ Configuring `nginxinc/nginx-s3-gateway` image to act as an authenticating and ca
 ## Run
 
 ```
-docker build -t nginx-s3-gateway:v1.0.0 .
-docker tag nginx-s3-gateway:v1.0.0 <prefix>/nginx-s3-gateway:v1.0.0
+docker build -t <prefix>/nginx-s3-gateway:v1.0.0 .
 ```
 
 ## Installation
