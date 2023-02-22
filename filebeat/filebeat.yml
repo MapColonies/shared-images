@@ -16,7 +16,6 @@ filebeat.inputs:
         overwrite_keys: false
         add_error_key: true
 
-  tags: ["3d-model-ingestion-service"]
   interval: 5s
 
 output.elasticsearch:
