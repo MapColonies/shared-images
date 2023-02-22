@@ -1,0 +1,30 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /usr/src/app/logs/*.log
+    - /var/log/nginx/access.log
+    - /var/log/nginx/error.log
+    - /var/log/pycsw/pycsw.log
+
+  processors:
+    - decode_json_fields:
+        fields: ["message"]
+        process_array: false
+        max_depth: 2
+        target: ""
+        overwrite_keys: false
+        add_error_key: true
+
+  tags: ["3d-model-ingestion-service"]
+  interval: 5s
+
+output.elasticsearch:
+  hosts: ["10.8.0.8:9200"]
+
+setup.template.enabled: true
+setup.template.name: "mapcolonies"
+setup.template.pattern: "mapcolonies-*"
+
+setup.kibana:
+  host: "10.8.0.8:5601"
