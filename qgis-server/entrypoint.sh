@@ -1,5 +1,3 @@
 #!/bin/sh
 
-echo copy projects
-
-exec "$@"
+zx ./copy-projects.mjs
