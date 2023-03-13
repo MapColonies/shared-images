@@ -11,23 +11,22 @@ QGIS-Server allows you to customize your map services to suit your specific need
 ## Run
 
 ```
-docker build \
-      --build-arg aws_access_key_id=avi \
-      --build-arg aws_secret_access_key=aviPassword \
-      --build-arg aws_endpoint_url=http://localhost:9000 \
-      --build-arg aws_bucket_name=bucket-name \
-      -t qgis-server:latest .
+docker image build -t qgis-server:latest .
 ```
 ```
-docker container run -d --rm --name qgis-server \
+docker container run --rm --name qgis-server \
       --network host \
       -e SKIP_NGINX=0 \
       -e QGIS_SERVER_LOG_FILE=/var/tmp/qgisserver.log \
       -e QGIS_SERVER_LOG_LEVEL=0 \
+      -e AWS_ACCESS_KEY_ID=avi \
+      -e AWS_SECRET_ACCESS_KEY=aviPassword \
+      -e AWS_ENDPOINT_URL=http://localhost:9000 \
+      -e AWS_BUCKET_NAME=bucket-name \
       -v /docker/qgis/data:/io/data \
       -v /docker/qgis/fonts:/usr/share/fonts \
       -v /docker/qgis/plugins:/io/plugins \
-      qgis-server:latest
+      qgis-server:latest -d
 ```
 
 ## Installation
