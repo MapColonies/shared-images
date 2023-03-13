@@ -11,8 +11,7 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_19.x" | bash - && apt-get insta
 RUN npm i -g zx@${ZX_VERSION}
 
 # aws cli
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip
-RUN ./aws/install
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
 
 USER root
 
