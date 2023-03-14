@@ -22,16 +22,18 @@ docker container run --rm --name qgis-server \
       -e AWS_SECRET_ACCESS_KEY=rasterPassword \
       -e AWS_ENDPOINT_URL=http://10.8.0.9:9000 \
       -e AWS_BUCKET_NAME=dem-int \
+      -e RAW_DATA_PROXY_URL=https://client-int-qgis-integration-nginx-s3-gateway-route-integration.apps.j1lk3njp.eastus.aroapp.io \
       -v /docker/qgis/data:/io/data \
       -v /docker/qgis/fonts:/usr/share/fonts \
       -v /docker/qgis/plugins:/io/plugins \
       qgis-server:v1.0.0 -d
 ```
-
+  
 The following variables can be customized during container deployment:
 
 - `QGIS_SERVER_LOG_FILE`: default is `/var/tmp/qgisserver.log`
 - `QGIS_SERVER_LOG_LEVEL`: default is `0`
+- `RAW_DATA_PROXY_URL`: default is http://client-int-dem-integration-nginx-s3-gateway:8080
   
 ## Installation
 
