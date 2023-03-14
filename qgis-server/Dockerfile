@@ -1,6 +1,7 @@
 FROM openquake/qgis-server:3.16.13
 
-RUN sed -i 's/user www-data;/# user www-data;/' /etc/nginx/nginx.conf
+RUN sed -i 's/user www-data;/# user www-data;/' /etc/nginx/nginx.conf && \
+    sed -i 's/80/8080/g' /etc/nginx/nginx.conf
 
 WORKDIR /scripts
 
