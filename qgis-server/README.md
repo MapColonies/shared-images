@@ -16,7 +16,6 @@ docker image build -t qgis-server:v1.0.0 .
 ```
 docker container run --rm --name qgis-server \
       --network host \
-      -e SKIP_NGINX=0 \
       -e QGIS_SERVER_LOG_FILE=/var/tmp/qgisserver.log \
       -e QGIS_SERVER_LOG_LEVEL=0 \
       -e AWS_ACCESS_KEY_ID=raster \
@@ -31,12 +30,8 @@ docker container run --rm --name qgis-server \
 
 The following variables can be customized during container deployment:
 
-- `SKIP_NGINX`: default is _unset_ (do not skip Nginx startup)*
 - `QGIS_SERVER_LOG_FILE`: default is `/var/tmp/qgisserver.log`
-- `QGIS_SERVER_LOG_LEVEL`: default is `1`
-- `QGIS_SERVER_MAX_THREADS`: default is `2`
-
-*When `SKIP_NGINX` is set to a different value than `0` or `false` the embedded copy of Nginx will not be started and an external reverse proxy is then required to access the FastCGI QGIS backend.
+- `QGIS_SERVER_LOG_LEVEL`: default is `0`
   
 ## Installation
 
