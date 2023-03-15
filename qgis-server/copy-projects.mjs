@@ -20,7 +20,7 @@ $.verbose = false;
     } 
   })
   .catch((e) => {
-    console.log(`\n!!!**** ${dataType} folder doesn't exist ****!!!\n`);
+    console.log(`\n!!!**** Error: 'aws s3 ls' failed for ${dataType} ****!!!\n`);
     console.log(`${e.stdout.trim()}\n`);
     return;
   });
