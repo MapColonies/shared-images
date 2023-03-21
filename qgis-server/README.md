@@ -2,11 +2,11 @@
 
 Configuring `openquake/qgis-server` image which exposes a QGIS Server on Ubuntu.
   
-## Why?
+## Why
 
 QGIS Server is an open source web mapping software that allows you to publish QGIS projects as OGC-compliant map services (Open Geospatial Consortium standards).  
 It supports open standards such as OGC WMS, WMTS, WFS, WCS and CSW.  
-QGIS-Server allows you to customize your map services to suit your specific needs. You can choose which layers to include, set layer styles and labels, and control how the map is displayed.
+QGIS Server allows you to customize your map services to suit your specific needs. You can choose which layers to include, set layer styles and labels, and control how the map is displayed.
   
 ## Run
 
