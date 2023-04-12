@@ -1,7 +1,5 @@
 FROM openquake/qgis-server:3.16.13
 
-COPY nginx.conf /etc/nginx/nginx.conf
-
 RUN chgrp -R 0 /tmp /var/cache /var/log/nginx /var/lib/nginx /var/lib/qgis
 RUN chmod -R g=u /tmp /var/cache /var/log/nginx /var/lib/nginx /var/lib/qgis
 
