@@ -22,6 +22,9 @@ js_var $indexIsEmpty true;
 js_set $s3auth s3gateway.s3auth;
 js_set $s3uri s3gateway.s3uri;
 
+js_import main from "/etc/nginx/jwt.js";
+js_set $jwt_payload_sub main.jwt_payload_sub;
+
 server {
     listen ${LISTEN_ON_PORT};
     include /etc/nginx/conf.d/gateway/server_variables.conf;
