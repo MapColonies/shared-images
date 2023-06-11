@@ -33,6 +33,7 @@ server {
     add_header Access-Control-Allow-Origin *;
 
     proxy_hide_header Content-Encoding;
+    include /etc/nginx/conf.d/header/*.conf;
 
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
@@ -77,6 +78,8 @@ server {
 
     location / {
         add_header Access-Control-Allow-Headers 'x-api-key';
+
+        # include /etc/nginx/conf.d/header/*.conf;
 
         if ($request_method = OPTIONS ) {
             add_header Access-Control-Allow-Headers 'x-api-key';
@@ -125,7 +128,7 @@ server {
 
         proxy_pass ${S3_SERVER_PROTO}://storage_urls$s3uri;
         
-        include /etc/nginx/conf.d/header/*.conf;
+        # include /etc/nginx/conf.d/header/*.conf;
     }
 
     location @s3Listing {
