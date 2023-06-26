@@ -1,7 +1,9 @@
 FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220413
 
-# users are not allowed to listen on priviliged ports
-RUN sed -i.bak 's/listen\(.*\)80;/listen 8080;/' /etc/nginx/conf.d/default.conf
+COPY jwt.js /etc/nginx/jwt.js
+COPY default.conf.template /etc/nginx/templates
+COPY nginx.conf /etc/nginx/nginx.conf
+
 EXPOSE 8080
 
 RUN chmod g+rwx -R /var/cache/nginx /var/run /var/log/nginx && \
