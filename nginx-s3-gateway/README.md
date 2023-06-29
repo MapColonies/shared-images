@@ -16,11 +16,11 @@ Configuring `nginxinc/nginx-s3-gateway` image to act as an authenticating and ca
 ## Build
 
 ```
-docker image build -t acrarolibotnonprod.azurecr.io/nginx-s3-gateway:v1.0.0 .
+docker image build -t <prefix>/nginx-s3-gateway:v1.0.0 .
 ```
 
 ```
-docker image push acrarolibotnonprod.azurecr.io/nginx-s3-gateway:v1.0.0
+docker image push <prefix>/nginx-s3-gateway:v1.0.0
 ```
 
 ## Run
@@ -28,7 +28,7 @@ docker image push acrarolibotnonprod.azurecr.io/nginx-s3-gateway:v1.0.0
 ```
 docker container run --rm --name nginx-s3-gateway \
   --network host \
-  -e S3_BUCKET_NAME=dem-int \
+  -e S3_BUCKET_NAME=<bucket> \
   -e S3_SERVER=10.8.0.9 \
   -e S3_SERVER_PORT=9000 \
   -e S3_SERVER_PROTO=http \
@@ -36,9 +36,9 @@ docker container run --rm --name nginx-s3-gateway \
   -e S3_STYLE=path \
   -e ALLOW_DIRECTORY_LIST=true \
   -e AWS_SIGS_VERSION=4 \
-  -e S3_ACCESS_KEY_ID=raster \
-  -e S3_SECRET_KEY=rasterPassword \
-  acrarolibotnonprod.azurecr.io/nginx-s3-gateway:v1.0.0 -d
+  -e S3_ACCESS_KEY_ID=avi \
+  -e S3_SECRET_KEY=aviPassword \
+  <prefix>/nginx-s3-gateway:v1.0.0 -d
 ```
 
 ```
