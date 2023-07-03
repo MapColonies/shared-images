@@ -39,6 +39,7 @@ docker container run --rm --name nginx-s3-gateway \
   -e S3_ACCESS_KEY_ID=avi \
   -e S3_SECRET_KEY=aviPassword \
   -e NGINX_WORKER_PROCESSES=4 \
+  -e NO_CACHE=false \
   <prefix>/nginx-s3-gateway:v1.0.0 -d
 ```
 
