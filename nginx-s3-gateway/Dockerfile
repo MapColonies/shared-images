@@ -1,7 +1,7 @@
 FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220413
 
 COPY jwt.js /etc/nginx/jwt.js
-COPY 15-envsubst-on-nginx-conf.sh /docker-entrypoint.d
+COPY 25-envsubst-on-nginx-conf.sh /docker-entrypoint.d
 COPY default.conf.template /etc/nginx/templates
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
