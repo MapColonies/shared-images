@@ -1,7 +1,5 @@
 FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20220413
 
-ENV NO_CACHE false
-
 COPY jwt.js /etc/nginx/jwt.js
 COPY 15-envsubst-on-nginx-conf.sh /docker-entrypoint.d
 COPY default.conf.template /etc/nginx/templates

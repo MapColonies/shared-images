@@ -18,11 +18,6 @@ map $S3_STYLE $s3_host_hdr {
     default "${S3_BUCKET_NAME}.${S3_SERVER}";
 }
 
-map ${NO_CACHE} $bypass_cache {
-    default 0;
-    1       1;
-}
-
 js_var $indexIsEmpty true;
 # This creates the HTTP authentication header to be sent to S3
 js_set $s3auth s3gateway.s3auth;
@@ -81,8 +76,6 @@ server {
     }
 
     location / {
-        proxy_cache_bypass $bypass_cache;
-
         add_header Access-Control-Allow-Headers 'x-api-key';
 
         if ($request_method = OPTIONS ) {
