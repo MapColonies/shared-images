@@ -36,10 +36,15 @@ docker container run --rm --name nginx-s3-gateway \
   -e S3_STYLE=path \
   -e ALLOW_DIRECTORY_LIST=true \
   -e AWS_SIGS_VERSION=4 \
-  -e S3_ACCESS_KEY_ID=avi \
-  -e S3_SECRET_KEY=aviPassword \
+  -e AWS_ACCESS_KEY_ID=<user> \
+  -e AWS_SECRET_ACCESS_KEY=<password> \
+  -e CORS_ENABLED=true \
   -e NGINX_WORKER_PROCESSES=4 \
-  -e NO_CACHE=false \
+  -e PROXY_CACHE_MAX_SIZE=10g \
+  -e PROXY_CACHE_INACTIVE=60m \
+  -e PROXY_CACHE_VALID_OK=1h \
+  -e PROXY_CACHE_VALID_NOTFOUND=1m \
+  -e PROXY_CACHE_VALID_FORBIDDEN=30s \
   <prefix>/nginx-s3-gateway:v1.0.0 -d
 ```
 
