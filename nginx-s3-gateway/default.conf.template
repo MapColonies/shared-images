@@ -32,8 +32,6 @@ server {
     proxy_hide_header Access-Control-Allow-Origin;
     add_header Access-Control-Allow-Origin *;
 
-    proxy_hide_header Content-Encoding;
-
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
     server_tokens off;
