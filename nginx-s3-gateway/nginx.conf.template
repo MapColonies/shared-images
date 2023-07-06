@@ -48,10 +48,11 @@ http {
 
     log_format main escape=json 
     '{'
+        '"Timestamp": $nanosec,'
         '"Attributes": {'
             '"time_local": "$time_local",'
             '"http.status_code": $status,'
-            '"http.referer": "$http_referer",'
+            '"http.url": "$http_referer",'
             '"http.x_forwarded_for": "$http_x_forwarded_for",'
             '"http.user_agent": "$http_user_agent",'
             '"http.request_time": $request_time,'
