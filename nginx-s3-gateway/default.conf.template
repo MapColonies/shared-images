@@ -19,6 +19,11 @@ map $S3_STYLE $s3_host_hdr {
     default "${S3_BUCKET_NAME}.${S3_SERVER}";
 }
 
+map $request_uri $isTerrain {
+    default false;
+    ~/.+\.terrain true;
+}
+
 js_var $indexIsEmpty true;
 # This creates the HTTP authentication header to be sent to S3
 js_set $s3auth s3gateway.s3auth;
@@ -30,6 +35,8 @@ js_set $jwt_payload_sub main.jwt_payload_sub;
 server {
     listen  8080;
     include /etc/nginx/conf.d/gateway/server_variables.conf;
+
+    proxy_hide_header Content-Encoding;
 
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
