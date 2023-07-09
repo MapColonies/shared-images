@@ -19,6 +19,11 @@ map $S3_STYLE $s3_host_hdr {
     default "${S3_BUCKET_NAME}.${S3_SERVER}";
 }
 
+map $request_uri $isTerrain {
+    default false;
+    ~/.+\.terrain true;
+}
+
 js_var $indexIsEmpty true;
 # This creates the HTTP authentication header to be sent to S3
 js_set $s3auth s3gateway.s3auth;
@@ -37,7 +42,7 @@ server {
 
     # Uncomment this for a HTTP header that will let you know the cache status
     # of an object.
-    # add_header X-Cache-Status $upstream_cache_status;
+    add_header X-Cache-Status $upstream_cache_status;
 
     # Proxy caching configuration. Customize this for your needs.
     proxy_cache s3_cache;
