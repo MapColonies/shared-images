@@ -19,16 +19,6 @@ map $S3_STYLE $s3_host_hdr {
     default "${S3_BUCKET_NAME}.${S3_SERVER}";
 }
 
-map $request_uri $is_terrain {
-    default false;
-    ~/.+\.terrain true;
-}
-
-map $request_uri $header_to_hide {
-    default '';
-    ~/.+\.terrain Content-Encoding;
-}
-
 js_var $indexIsEmpty true;
 # This creates the HTTP authentication header to be sent to S3
 js_set $s3auth s3gateway.s3auth;
@@ -41,15 +31,13 @@ server {
     listen  8080;
     include /etc/nginx/conf.d/gateway/server_variables.conf;
 
-    proxy_hide_header $header_to_hide;
-
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
     server_tokens off;
 
     # Uncomment this for a HTTP header that will let you know the cache status
     # of an object.
-    add_header X-Cache-Status $upstream_cache_status;
+    # add_header X-Cache-Status $upstream_cache_status;
 
     # Proxy caching configuration. Customize this for your needs.
     proxy_cache s3_cache;
