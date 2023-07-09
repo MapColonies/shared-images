@@ -48,7 +48,6 @@ http {
 
     log_format main escape=json 
     '{'
-        '"Timestamp": $nanosec,'
         '"Attributes": {'
             '"time_local": "$time_local",'
             '"http.status_code": $status,'
