@@ -30,7 +30,7 @@ js_set $jwt_payload_sub main.jwt_payload_sub;
 server {
     listen  8080;
     include /etc/nginx/conf.d/gateway/server_variables.conf;
-    
+
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
     server_tokens off;
