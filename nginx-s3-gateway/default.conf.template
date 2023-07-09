@@ -36,7 +36,9 @@ server {
     listen  8080;
     include /etc/nginx/conf.d/gateway/server_variables.conf;
 
-    proxy_hide_header Content-Encoding;
+    if ($isTerrain = 'true') {
+        proxy_hide_header Content-Encoding;
+    }
 
     # Don't display the NGINX version number because we don't want to reveal
     # information that could be used to find an exploit.
