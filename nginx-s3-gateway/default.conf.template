@@ -67,13 +67,9 @@ server {
     }
 
     location /health {
-        return 200;
-    }
-
-    location = /liveness {
         access_log    off;
         log_not_found off;
-        stub_status;
+        return 200;
     }
 
     location / {
