@@ -46,6 +46,8 @@ http {
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
 
+    js_import main from /etc/nginx/jwt.js;
+    js_set $jwt_payload_sub main.jwt_payload_sub;
     include /etc/nginx/log_format.conf;
 
     access_log  /var/log/nginx/access.log  main;
