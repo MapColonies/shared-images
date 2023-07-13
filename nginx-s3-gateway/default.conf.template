@@ -65,8 +65,6 @@ server {
     }
 
     location /health {
-        access_log    off;
-        log_not_found off;
         return 200;
     }
 
