@@ -4,7 +4,6 @@ COPY jwt.js /etc/nginx/jwt.js
 COPY 21-envsubst-on-nginx-conf.sh /docker-entrypoint.d
 COPY default.conf.template /etc/nginx/templates
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
-COPY log_format.conf /etc/nginx/log_format.conf
 
 RUN chmod g+rwx -R /var/cache/nginx /var/run /var/log/nginx && \
   chgrp -R root /var/cache/nginx /var/log/nginx && \
