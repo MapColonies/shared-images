@@ -58,4 +58,4 @@ docker container stop nginx-s3-gateway
 
 ## Install
 
-See: [nginx-s3-gateway-helm](https://github.com/MapColonies/nginx-s3-gateway-helm)
+See: [MapColonies/nginx-s3-gateway](https://github.com/MapColonies/nginx-s3-gateway)
