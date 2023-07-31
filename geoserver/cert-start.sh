@@ -13,6 +13,11 @@ then
   export JAVA_OPTS="${JAVA_OPTS} -javaagent:/otel/opentelemetry-javaagent.jar"
 fi
 
+if [ "$TELEMETRY_METRICS_ENABLED" = "true" ]
+then
+  export JAVA_OPTS="${JAVA_OPTS} -javaagent:/jmx/jmx_prometheus_javaagent.jar=12345:/jmx/config.yaml"
+
+fi
 
 if [ "$ADD_ROOT_CERTS" = "true" ]
 then
@@ -24,6 +29,7 @@ then
 
   export JAVA_OPTS="${JAVA_OPTS} -Djavax.net.ssl.trustStore=mystore -Djavax.net.ssl.trustStorePassword=changeit"
 fi
+
 
 
 /scripts/entrypoint.sh
