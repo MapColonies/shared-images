@@ -37,6 +37,7 @@ npx zx index.mjs
 | ADD_ROOT_CERTS | | enable adding certs to geoserver
 | ROOT_CERTS_PATH | | path to load the certs from
 | TELEMETRY_TRACING_ENABLED||set to true if you want the app to be traced
+| TELEMETRY_METRICS_ENABLED||set to true if you want JVM metrics exported for prometheus. port is 12345
 | LOG4J_VERSION ||used for json logging, defaults to 2.17.2
 
 ## Postgres SSL authentication
