@@ -1,0 +1,87 @@
+{{- if .Values.nginx.enabled -}}
+{{- $chartName := include "nginx.name" . -}}
+{{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
+{{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  labels:
+    app: {{ .Release.Name }}-{{ $chartName }}
+    component: nginx-deployment
+    environment: {{ .Values.environment }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.nginx.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ $chartName }}
+      release: {{ .Release.Name }}
+      run: {{ .Release.Name }}-nginx
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ $chartName }}
+        release: {{ .Release.Name }}
+        run: {{ .Release.Name }}-nginx
+      annotations:
+        {{- if .Values.resetOnConfigChange }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end }}
+    spec:
+    {{- if $cloudProviderImagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ $cloudProviderImagePullSecretName | quote }}
+    {{- end }}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ .Release.Name }}-nginx-configmap
+            items:
+            - key: "NGINX_DEFAULT_CONFIG"
+              path: "default.conf"
+        - name: nginx-root-config
+          configMap:
+            name: {{ .Release.Name }}-nginx-configmap
+            items:
+            - key: "NGINX_ROOT_CONFIG"
+              path: "nginx.conf"
+        - name: nginx-log-format
+          configMap:
+            name: {{ .Release.Name }}-nginx-configmap
+            items:
+            - key: "NGINX_LOG_FORMAT"
+              path: "log_format.conf"
+      containers:
+        - name: {{ .Release.Name }}-nginx
+          {{- with .Values.nginx.image }}
+          image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          volumeMounts:
+          - mountPath: "/etc/nginx/conf.d/default.conf"
+            name: nginx-config
+            readOnly: true
+            subPath: default.conf
+          - mountPath: "/etc/nginx/nginx.conf"
+            name: nginx-root-config
+            subPath: nginx.conf
+            readOnly: true
+          - mountPath: "/etc/nginx/log_format.conf"
+            name: nginx-log-format
+            readOnly: true
+            subPath: log_format.conf
+          ports:
+            - name: http
+              containerPort: {{ .Values.nginx.targetPort }}
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.initialDelaySeconds }}
+            httpGet:
+              path: /nginx_status
+              port: {{ .Values.nginx.siteStatusPort }}
+          {{- if .Values.nginx.resources.enabled }}
+          resources:
+            {{- toYaml .Values.nginx.resources.value | nindent 12 }}
+          {{- end }}
+{{- end }}
