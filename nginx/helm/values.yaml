@@ -46,31 +46,27 @@ env:
   opentelemetry:
     serviceName: nginx
     exporterEndpoint: localhost:4317
-    debug: off
+    tracesAsError: "OFF" # on / off
 
 authentication:
   enabled: true
   domain: 'example'
-  url: 'http://localhost'
+  url: 'http://localhost:8181/v1/data/http/authz/decision'
 
-# route:
-#   enabled: true
-#   path: /api/raster/v1
-#   host: 
-#   https: true
-#   timeout:
-#     enabled: false # defaults to 30s by openshift
-#     duration: 60s # supported units (us, ms, s, m, h, d)
-#   useCert: false
+route:
+  enabled: true
+  path: /
+  host: 
+  https: true
+  timeout:
+    enabled: false # defaults to 30s by openshift
+    duration: 60s # supported units (us, ms, s, m, h, d)
+  useCert: false
 
-# ingress:
-#   enabled: false
-#   type: 'nginx-org' # supported values: 'nginx-org' | 'nginx-kubernetes'
-#   path: /api/raster/v1
-#   host: 'localhost'
-#   cors:
-#     enabled: true
-#     origin: '*'
-#   tls: 
-#     enabled: true
-#     useExternal: ''
+ingress:
+  enabled: false
+  path: /
+  host: 'localhost'
+  tls: 
+    enabled: true
+    secretName: ''

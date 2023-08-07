@@ -107,3 +107,10 @@ Returns the cloud provider image pull secret name from global if exists or from 
 {{- end -}}
 {{- end -}}
 
+{{/*
+Returns all annoations for the ingress component
+*/}}
+{{- define "nginx.ingress.annotations" -}}
+annotations:
+    kubernetes.io/ingress.class: openshift-default
+{{- end -}}

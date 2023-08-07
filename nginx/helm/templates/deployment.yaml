@@ -37,38 +37,30 @@ spec:
         - name: nginx-config
           configMap:
             name: {{ .Release.Name }}-nginx-configmap
-            items:
-            - key: "NGINX_DEFAULT_CONFIG"
-              path: "default.conf"
-        - name: nginx-root-config
-          configMap:
-            name: {{ .Release.Name }}-nginx-configmap
-            items:
-            - key: "NGINX_ROOT_CONFIG"
-              path: "nginx.conf"
-        - name: nginx-log-format
-          configMap:
-            name: {{ .Release.Name }}-nginx-configmap
-            items:
-            - key: "NGINX_LOG_FORMAT"
-              path: "log_format.conf"
       containers:
         - name: {{ .Release.Name }}-nginx
           {{- with .Values.nginx.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
           {{- end }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+          - name: OTEL_SERVICE_NAME
+            value: {{ .Values.env.opentelemetry.serviceName | quote}}
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: {{ .Values.env.opentelemetry.exporterEndpoint | quote}}
+          - name: OTEL_TRACES_AS_ERROR
+            value: {{ (upper .Values.env.opentelemetry.tracesAsError) | quote }}
           volumeMounts:
           - mountPath: "/etc/nginx/conf.d/default.conf"
             name: nginx-config
             readOnly: true
             subPath: default.conf
           - mountPath: "/etc/nginx/nginx.conf"
-            name: nginx-root-config
+            name: nginx-config
             subPath: nginx.conf
             readOnly: true
           - mountPath: "/etc/nginx/log_format.conf"
-            name: nginx-log-format
+            name: nginx-config
             readOnly: true
             subPath: log_format.conf
           ports:
