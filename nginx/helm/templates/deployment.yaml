@@ -36,7 +36,7 @@ spec:
       volumes:
         - name: nginx-config
           configMap:
-            name: {{ .Release.Name }}-nginx-configmap
+            name: {{ .Release.Name }}-configmap
       containers:
         - name: {{ .Release.Name }}-nginx
           {{- with .Values.nginx.image }}
