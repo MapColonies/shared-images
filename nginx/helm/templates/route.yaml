@@ -1,0 +1,37 @@
+{{- $releaseName := .Release.Name -}}
+{{- $chartName := include "nginx.name" . -}}
+{{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
+{{- $serviceName := include "service.fullname" . -}}
+{{- if and (and (.Values.enabled) (eq $cloudProviderFlavor "openshift")) (.Values.route.enabled) -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $releaseName }}-route
+  annotations:
+    {{- if .Values.route.rewriteTarget }}
+    haproxy.router.openshift.io/rewrite-target: {{ .Values.route.rewriteTarget }}
+    {{- end }}
+    {{- if .Values.route.timeout.enabled }}
+    haproxy.router.openshift.io/timeout: {{ .Values.route.timeout.duration }}
+    {{- end }}
+spec:
+  {{- if .Values.route.host }}
+  host: {{ .Values.route.host }}
+  {{- end }}
+  path:  {{ .Values.route.path | default "/" }}
+  port:
+    targetPort: nginx
+  to:
+    kind: Service
+    name: {{ $serviceName }}
+  {{- if .Values.route.https }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+    {{- if .Values.route.useCert }}
+    certificate: {{ .Files.Get "config/cert.pem" | quote }}
+    key: {{ .Files.Get "config/key.pem" | quote }}
+    caCertificate: {{ .Files.Get "config/cacert.pem" | quote }}
+    {{- end }}
+  {{- end -}}
+{{- end -}}

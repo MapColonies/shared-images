@@ -1,0 +1,73 @@
+global:
+  cloudProvider: {}
+  tracing: {}
+  metrics: {}
+  environment: {}
+  authentication:
+
+enabled: true
+environment: development
+replicaCount: 1
+initialDelaySeconds: 60
+resetOnConfigChange: true
+imagePullPolicy: Always
+
+cloudProvider:
+  dockerRegistryUrl: my-registry-url
+  imagePullSecretName: imagepullsecret
+  flavor: openshift
+
+caSecretName: ''
+caPath: '/usr/local/share/ca-certificates'
+caKey: 'ca.crt'
+
+nginx:
+  image:
+    repository: nginx
+    tag: 'latest' 
+  port: 8080
+  internalServicePort: 80
+  targetPort: 8080
+  siteStatusPort: 8081
+  nodePort: 30001
+  resources:
+    enabled: true
+    value:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+env:
+  opentelemetry:
+    serviceName: nginx
+    exporterEndpoint: localhost:4317
+    samplerMethod: "AlwaysOff" # AlwaysOn, AlwaysOff, TraceIdRatioBased
+    ratio: 0.1 # between 0 and 1
+    parentBased: "false" # true, false
+
+authentication:
+  enabled: true
+  domain: 'example'
+  url: 'http://localhost:8181/v1/data/http/authz/decision'
+
+route:
+  enabled: true
+  path: /
+  host: 
+  https: true
+  timeout:
+    enabled: false # defaults to 30s by openshift
+    duration: 60s # supported units (us, ms, s, m, h, d)
+  useCert: false
+  rewriteTarget: ''
+
+ingress:
+  enabled: false
+  path: /
+  host: 'localhost'
+  tls: 
+    enabled: true
+    secretName: ''
