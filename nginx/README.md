@@ -16,8 +16,9 @@ Besides that the `Dockerfile` is pretty straight forward so you can open it up a
 
 ### OpenTelemetry Support
 There's support for instrumenting Nginx with OpenTelemetry (currently only for tracing), simply provide these environment variables:
+
 | Environment Variable | Description | Default Value |
-| ----|----|----|----|
+| ---------------------------- | ---------------------------------------------- | ---- |
 | `OTEL_SERVICE_NAME` | Name of service | `nginx-proxy` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Endpoint address of OpenTelemetry Collector | `localhost:4317` |
 | `OTEL_TRACES_SAMPELR` | Sampling method | `AlwaysOff` |
