@@ -22,5 +22,5 @@ name = "${OTEL_SERVICE_NAME}"
 
 [sampler]
 name = "${OTEL_TRACES_SAMPELR}" # AlwaysOn, AlwaysOff, TraceIdRatioBased
-ratio = 0.1
+ratio = "${OTEL_TRACES_SAMPLER_RATIO}"
 parent_based = "${OTEL_TRACES_SAMPLER_PARENT_BASED}"
