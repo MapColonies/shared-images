@@ -38,8 +38,9 @@ There is also an Helm Chart for deploying this Nginx in an Openshift environment
  
 ### Parameters
 These are the main parameters you should adjust when you deploy this Helm Chart. You can find all parameters in the `values.yaml` file.
-Name | Description | Value
-----|----|----|----|
+
+| Name | Description | Value |
+| ------------------------------------ | ----------------------------------------------------------- | ------- |
 `nginx.image.repository` | Docker image name | `nginx`
 `nginx.image.tag` | Docker image tag | `latest`
 `nginx.resources.enabled` | Use custom resources | `true`
