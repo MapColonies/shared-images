@@ -39,6 +39,9 @@ nginx:
       requests:
         cpu: 100m
         memory: 128Mi
+  additionalPodAnnotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9113'
 
 env:
   opentelemetry:
@@ -47,6 +50,23 @@ env:
     samplerMethod: "AlwaysOff" # AlwaysOn, AlwaysOff, TraceIdRatioBased
     ratio: 0.1 # between 0 and 1
     parentBased: "false" # true, false
+
+prometheusExporter:
+  enabled: false
+  image:
+    repository: nginx/nginx-prometheus-exporter
+    tag: latest
+    pullPolicy: IfNotPresent
+  targetPort: 9113
+  resources:
+    enabled: true
+    value:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi  
 
 authorization:
   enabled: true

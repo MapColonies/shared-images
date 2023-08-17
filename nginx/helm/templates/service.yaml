@@ -31,6 +31,12 @@ spec:
       {{- if eq $cloudProviderFlavor "minikube" }}
       nodePort: {{ .Values.nginx.nodePort }}
       {{- end }}
+      {{- if .Values.prometheusExporter.enabled }}
+    - port: {{ .Values.prometheusExporter.targetPort }}
+      targetPort: {{ .Values.prometheusExporter.targetPort }}
+      protocol: TCP
+      name: prometheus-exporter
+      {{- end }}
   selector:
     app: {{ $releaseName }}-{{ $chartName }}
     release: {{ .Release.Name }}

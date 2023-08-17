@@ -27,7 +27,8 @@ spec:
       annotations:
         {{- if .Values.resetOnConfigChange }}
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- end }}
+        {{- end -}}
+        {{- toYaml .Values.nginx.additionalPodAnnotations | nindent 8 }}
     spec:
     {{- if $cloudProviderImagePullSecretName }}
       imagePullSecrets:
@@ -79,5 +80,26 @@ spec:
           {{- if .Values.nginx.resources.enabled }}
           resources:
             {{- toYaml .Values.nginx.resources.value | nindent 12 }}
+          {{- end }}
+          {{- if .Values.prometheusExporter.enabled }}
+        - name: {{ .Release.Name }}-prometheus-exporter
+          {{- with .Values.prometheusExporter.image }}
+          image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
+          {{- end }}
+          args: ["-nginx.scrape-uri=http://localhost:8081/nginx_status"]
+          imagePullPolicy: {{ .Values.prometheusExporter.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.prometheusExporter.targetPort }}
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.initialDelaySeconds }}
+            httpGet:
+              path: /
+              port: {{ .Values.prometheusExporter.targetPort }}
+          {{- if .Values.prometheusExporter.resources.enabled }}
+          resources:
+            {{- toYaml .Values.prometheusExporter.resources.value | nindent 12 }}
+          {{- end }}
           {{- end }}
 {{- end }}
