@@ -4,7 +4,7 @@
 {{- $chartName := include "nginx.name" . -}}
 {{- $serviceName := include "service.fullname" . -}}
 {{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
-
+{{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -32,8 +32,8 @@ spec:
       nodePort: {{ .Values.nginx.nodePort }}
       {{- end }}
       {{- if .Values.prometheusExporter.enabled }}
-    - port: {{ .Values.prometheusExporter.targetPort }}
-      targetPort: {{ .Values.prometheusExporter.targetPort }}
+    - port: {{ $prometheusExporterPort }}
+      targetPort: {{ $prometheusExporterPort }}
       protocol: TCP
       name: prometheus-exporter
       {{- end }}

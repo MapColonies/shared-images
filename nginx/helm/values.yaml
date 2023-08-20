@@ -57,7 +57,6 @@ prometheusExporter:
     repository: nginx/nginx-prometheus-exporter
     tag: latest
     pullPolicy: IfNotPresent
-  targetPort: 9113
   resources:
     enabled: true
     value:

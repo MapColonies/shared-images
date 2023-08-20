@@ -114,3 +114,10 @@ Returns all annoations for the ingress component
 annotations:
     kubernetes.io/ingress.class: openshift-default
 {{- end -}}
+
+{{/*
+Define a port for NGINX Prometheus Exporter
+*/}}
+{{- define "prometheusExporter.targetPort" -}}
+{{- printf "9113" -}}
+{{- end -}}
