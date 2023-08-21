@@ -3,7 +3,6 @@
 {{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
 {{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
-{{- $podAnnotations := include "nginx.podAnnotations" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,7 +29,10 @@ spec:
         {{- if .Values.resetOnConfigChange }}
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         {{- end -}}
-        {{ $podAnnotations | nindent 8 }}
+        {{- if .Values.prometheusExporter.enabled }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: {{ $prometheusExporterPort | quote }}
+        {{- end}}
         {{- if .Values.nginx.additionalPodAnnotations }}
         {{- toYaml .Values.nginx.additionalPodAnnotations | nindent 8 }}
         {{- end }}

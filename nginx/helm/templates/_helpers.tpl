@@ -114,11 +114,3 @@ Returns the port for NGINX Prometheus Exporter
 {{- define "prometheusExporter.targetPort" -}}
 {{- printf "9113" -}}
 {{- end -}}
-
-{{/*
-Returns all annotations for the deployment component
-*/}}
-{{- define "nginx.podAnnotations" -}}
-prometheus.io/scrape: 'true'
-prometheus.io/port: '9113'
-{{- end -}}
