@@ -40,8 +40,7 @@ nginx:
         cpu: 100m
         memory: 128Mi
   additionalPodAnnotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: '9113'
+    {}
 
   # NGINX default.conf override
   # e.g:
@@ -49,6 +48,8 @@ nginx:
   # server {
   #   listen 8080;
   # }
+  # You can also "paste" configurations from different files, using:
+  # {{ range .Files.Lines }}
   default: ''
 
   # NGINX nginx.conf override

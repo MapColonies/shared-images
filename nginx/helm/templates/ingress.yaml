@@ -1,11 +1,10 @@
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "nginx.name" . -}}
-{{- $serviceName := include "service.fullname" . -}}
 {{- if and (.Values.enabled) (.Values.ingress.enabled) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $releaseName }}-ingress
+  name: {{ printf "%s-ingress" (include "nginx.fullname" .) }}
   {{ include "nginx.ingress.annotations" . }}
 spec:
   {{- if .Values.ingress.tls.enabled }}
@@ -21,7 +20,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ $serviceName }}
+            name: {{ printf "%s-service" (include "nginx.fullname" .) }}
             port:
               number: {{ .Values.nginx.port }}
     host: {{ .Values.ingress.host | quote }}

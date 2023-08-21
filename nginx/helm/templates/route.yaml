@@ -1,12 +1,10 @@
-{{- $releaseName := .Release.Name -}}
 {{- $chartName := include "nginx.name" . -}}
 {{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
-{{- $serviceName := include "service.fullname" . -}}
 {{- if and (and (.Values.enabled) (eq $cloudProviderFlavor "openshift")) (.Values.route.enabled) -}}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ $releaseName }}-route
+  name: {{ printf "%s-route" (include "nginx.fullname" .) }}
   annotations:
     {{- if .Values.route.rewriteTarget }}
     haproxy.router.openshift.io/rewrite-target: {{ .Values.route.rewriteTarget }}
@@ -23,7 +21,7 @@ spec:
     targetPort: nginx
   to:
     kind: Service
-    name: {{ $serviceName }}
+    name: {{ printf "%s-service" (include "nginx.fullname" .) }}
   {{- if .Values.route.https }}
   tls:
     termination: edge

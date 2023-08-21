@@ -3,10 +3,11 @@
 {{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
 {{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
+{{- $podAnnotations := include "nginx.podAnnotations" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: {{ printf "%s-deployment" (include "nginx.fullname" .) }}
   labels:
     app: {{ .Release.Name }}-{{ $chartName }}
     component: nginx-deployment
@@ -29,6 +30,7 @@ spec:
         {{- if .Values.resetOnConfigChange }}
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         {{- end -}}
+        {{ $podAnnotations | nindent 8 }}
         {{- if .Values.nginx.additionalPodAnnotations }}
         {{- toYaml .Values.nginx.additionalPodAnnotations | nindent 8 }}
         {{- end }}
@@ -40,9 +42,9 @@ spec:
       volumes:
         - name: nginx-config
           configMap:
-            name: {{ .Release.Name }}-configmap
+            name: {{ printf "%s-configmap" (include "nginx.fullname" .) }}
       containers:
-        - name: {{ .Release.Name }}-nginx
+        - name: nginx-container
           {{- with .Values.nginx.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
           {{- end }}
@@ -85,7 +87,7 @@ spec:
             {{- toYaml .Values.nginx.resources.value | nindent 12 }}
           {{- end }}
           {{- if .Values.prometheusExporter.enabled }}
-        - name: {{ .Release.Name }}-prometheus-exporter
+        - name: nginx-prometheus-exporter
           {{- with .Values.prometheusExporter.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
           {{- end }}

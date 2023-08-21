@@ -27,13 +27,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Create service name as used by the service name label.
-*/}}
-{{- define "service.fullname" -}}
-{{- printf "%s-%s" .Release.Name "service" }}
-{{- end }}
-
-{{/*
 Common labels
 */}}
 {{- define "nginx.labels" -}}
@@ -116,8 +109,16 @@ annotations:
 {{- end -}}
 
 {{/*
-Define a port for NGINX Prometheus Exporter
+Returns the port for NGINX Prometheus Exporter
 */}}
 {{- define "prometheusExporter.targetPort" -}}
 {{- printf "9113" -}}
+{{- end -}}
+
+{{/*
+Returns all annotations for the deployment component
+*/}}
+{{- define "nginx.podAnnotations" -}}
+prometheus.io/scrape: 'true'
+prometheus.io/port: '9113'
 {{- end -}}

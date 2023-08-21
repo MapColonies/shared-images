@@ -2,13 +2,12 @@
 {{- if .Values.enabled -}}
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "nginx.name" . -}}
-{{- $serviceName := include "service.fullname" . -}}
 {{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
 {{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $serviceName }}
+  name: {{ printf "%s-service" (include "nginx.fullname" .) }}
   labels:
     app: {{ $releaseName }}-{{ $chartName }}
     component: nginx-service
