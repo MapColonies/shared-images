@@ -95,7 +95,7 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `route.enabled` | Expose NGINX as an Openshift route | `true`
 `ingress.enabled` | Expose NGINX as an Ingress | `false`
 `additionalPodAnnotations.prometheus.io/scrape` | Should Prometheus scrape the NGINX Pod | `true`
-`additionalPodAnnotations.prometheus.io/port` | The port in which the prometheus-exporter runs on | `false`
+`additionalPodAnnotations.prometheus.io/port` | The port in which the prometheus-exporter runs on so the Prometheus Scraper look for `/metrics` endpoint | `9113`
 
 #### Overriding NGINX configuration files (nginx.conf, deafult.conf, log_format.conf)
 If you wish to override the default configuration files, you need to change their value in the `values.yaml`.
