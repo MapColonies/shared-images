@@ -81,6 +81,9 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `nginx.resources.value.limits.memory` | Pod memory limit | `128Mi`
 `nginx.resources.value.requests.cpu` | Pod CPU request | `100m`
 `nginx.resources.value.requests.memory` | Pod memory request | `128Mi`
+`nginx.default` | Override the `default.conf` file | `null`
+`nginx.conf` | Override the `nginx.conf` file | `null`
+`nginx.logFormat` | Overide the `log_format.conf` file | `null`
 `env.opentelemetry.serviceName` | OpenTelemetry service name to be associated your NGINX application | `nginx`
 `env.opentelemetry.exporterEndpoint` | OpenTelemetry Collector endpoint address | `localhost:4317`
 `env.opentelemetry.samplerMethod` | OpenTelemetry sampling method | `AlwaysOff`
