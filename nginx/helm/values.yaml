@@ -43,6 +43,20 @@ nginx:
     prometheus.io/scrape: 'true'
     prometheus.io/port: '9113'
 
+  # NGINX default.conf override
+  # e.g:
+  # default: |-
+  # server {
+  #   listen 8080;
+  # }
+  default: ''
+
+  # NGINX nginx.conf override
+  conf: ''
+
+  # NGINX log_format.conf override
+  logFormat: ''
+
 env:
   opentelemetry:
     serviceName: nginx
