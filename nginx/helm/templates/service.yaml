@@ -1,0 +1,43 @@
+
+{{- if .Values.enabled -}}
+{{- $releaseName := .Release.Name -}}
+{{- $chartName := include "nginx.name" . -}}
+{{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
+{{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-service" (include "nginx.fullname" .) }}
+  labels:
+    app: {{ $releaseName }}-{{ $chartName }}
+    component: nginx-service
+    environment: {{ .Values.environment }}
+    release: {{ .Release.Name }}
+spec:
+  # In case cloudProavider=azure
+  {{- if eq $cloudProviderFlavor "azure" }}
+  type: ClusterIP
+  {{- end }}
+  # In case cloudProvider=minikube
+  {{- if eq $cloudProviderFlavor "minikube" }}
+  type: NodePort
+  {{- end }}
+  ports:
+    - port: {{ .Values.nginx.port }}
+      targetPort: {{ .Values.nginx.targetPort }}
+      protocol: TCP
+      name: nginx
+      {{- if eq $cloudProviderFlavor "minikube" }}
+      nodePort: {{ .Values.nginx.nodePort }}
+      {{- end }}
+      {{- if .Values.prometheusExporter.enabled }}
+    - port: {{ $prometheusExporterPort }}
+      targetPort: {{ $prometheusExporterPort }}
+      protocol: TCP
+      name: prometheus-exporter
+      {{- end }}
+  selector:
+    app: {{ $releaseName }}-{{ $chartName }}
+    release: {{ .Release.Name }}
+    run: {{ .Release.Name }}-nginx
+{{- end }}

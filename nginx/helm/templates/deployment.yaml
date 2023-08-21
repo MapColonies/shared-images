@@ -1,0 +1,114 @@
+{{- if .Values.enabled -}}
+{{- $chartName := include "nginx.name" . -}}
+{{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
+{{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
+{{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-deployment" (include "nginx.fullname" .) }}
+  labels:
+    app: {{ .Release.Name }}-{{ $chartName }}
+    component: nginx-deployment
+    environment: {{ .Values.environment }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ $chartName }}
+      release: {{ .Release.Name }}
+      run: {{ .Release.Name }}-nginx
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ $chartName }}
+        release: {{ .Release.Name }}
+        run: {{ .Release.Name }}-nginx
+      annotations:
+        {{- if .Values.resetOnConfigChange }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end -}}
+        {{- if .Values.prometheusExporter.enabled }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: {{ $prometheusExporterPort | quote }}
+        {{- end}}
+        {{- if .Values.nginx.additionalPodAnnotations }}
+        {{- toYaml .Values.nginx.additionalPodAnnotations | nindent 8 }}
+        {{- end }}
+    spec:
+    {{- if $cloudProviderImagePullSecretName }}
+      imagePullSecrets:
+        - name: {{ $cloudProviderImagePullSecretName | quote }}
+    {{- end }}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ printf "%s-configmap" (include "nginx.fullname" .) }}
+      containers:
+        - name: nginx-container
+          {{- with .Values.nginx.image }}
+          image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+          - name: OTEL_SERVICE_NAME
+            value: {{ .Values.env.opentelemetry.serviceName | quote}}
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: {{ .Values.env.opentelemetry.exporterEndpoint | quote}}
+          - name: OTEL_TRACES_SAMPELR
+            value: {{ .Values.env.opentelemetry.samplerMethod | quote }}
+          - name: OTEL_TRACES_SAMPLER_RATIO
+            value: {{ .Values.env.opentelemetry.ratio | quote }}
+          - name: OTEL_TRACES_SAMPLER_PARENT_BASED
+            value: {{ .Values.env.opentelemetry.parentBased | quote }}
+          volumeMounts:
+          - mountPath: "/etc/nginx/conf.d/default.conf"
+            name: nginx-config
+            readOnly: true
+            subPath: default.conf
+          - mountPath: "/etc/nginx/nginx.conf"
+            name: nginx-config
+            subPath: nginx.conf
+            readOnly: true
+          - mountPath: "/etc/nginx/log_format.conf"
+            name: nginx-config
+            readOnly: true
+            subPath: log_format.conf
+          ports:
+            - name: http
+              containerPort: {{ .Values.nginx.targetPort }}
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.initialDelaySeconds }}
+            httpGet:
+              path: /nginx_status
+              port: {{ .Values.nginx.siteStatusPort }}
+          {{- if .Values.nginx.resources.enabled }}
+          resources:
+            {{- toYaml .Values.nginx.resources.value | nindent 12 }}
+          {{- end }}
+          {{- if .Values.prometheusExporter.enabled }}
+        - name: nginx-prometheus-exporter
+          {{- with .Values.prometheusExporter.image }}
+          image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
+          {{- end }}
+          args: ["-nginx.scrape-uri=http://localhost:8081/nginx_status"]
+          imagePullPolicy: {{ .Values.prometheusExporter.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $prometheusExporterPort }}
+              protocol: TCP
+          # Note: if the Prometheus Exporter container isn't live the entire Pod
+          # (including the NGINX container) will restart
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.initialDelaySeconds }}
+            httpGet:
+              path: /
+              port: {{ $prometheusExporterPort }}
+          {{- if .Values.prometheusExporter.resources.enabled }}
+          resources:
+            {{- toYaml .Values.prometheusExporter.resources.value | nindent 12 }}
+          {{- end }}
+          {{- end }}
+{{- end }}
