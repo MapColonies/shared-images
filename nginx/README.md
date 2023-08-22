@@ -84,6 +84,7 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `nginx.default` | Override the `default.conf` file | `null`
 `nginx.conf` | Override the `nginx.conf` file | `null`
 `nginx.logFormat` | Overide the `log_format.conf` file | `null`
+`nginx.additionalPodAnnotations` | Use this property in order to add custom annotations to the Pod | `{}`
 `env.opentelemetry.serviceName` | OpenTelemetry service name to be associated your NGINX application | `nginx`
 `env.opentelemetry.exporterEndpoint` | OpenTelemetry Collector endpoint address | `localhost:4317`
 `env.opentelemetry.samplerMethod` | OpenTelemetry sampling method | `AlwaysOff`
