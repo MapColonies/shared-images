@@ -23,12 +23,12 @@ spec:
   type: NodePort
   {{- end }}
   ports:
-    - port: {{ .Values.nginx.port }}
-      targetPort: {{ .Values.nginx.targetPort }}
+    - port: {{ .Values.port }}
+      targetPort: {{ .Values.targetPort }}
       protocol: TCP
       name: nginx
       {{- if eq $cloudProviderFlavor "minikube" }}
-      nodePort: {{ .Values.nginx.nodePort }}
+      nodePort: {{ .Values.nodePort }}
       {{- end }}
       {{- if .Values.prometheusExporter.enabled }}
     - port: {{ $prometheusExporterPort }}

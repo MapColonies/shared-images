@@ -33,8 +33,8 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: {{ $prometheusExporterPort | quote }}
         {{- end}}
-        {{- if .Values.nginx.additionalPodAnnotations }}
-        {{- toYaml .Values.nginx.additionalPodAnnotations | nindent 8 }}
+        {{- if .Values.additionalPodAnnotations }}
+        {{- toYaml .Values.additionalPodAnnotations | nindent 8 }}
         {{- end }}
     spec:
     {{- if $cloudProviderImagePullSecretName }}
@@ -47,7 +47,7 @@ spec:
             name: {{ printf "%s-configmap" (include "nginx.fullname" .) }}
       containers:
         - name: nginx-container
-          {{- with .Values.nginx.image }}
+          {{- with .Values.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ .tag }}
           {{- end }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
@@ -77,16 +77,16 @@ spec:
             subPath: log_format.conf
           ports:
             - name: http
-              containerPort: {{ .Values.nginx.targetPort }}
+              containerPort: {{ .Values.targetPort }}
               protocol: TCP
           livenessProbe:
             initialDelaySeconds: {{ .Values.initialDelaySeconds }}
             httpGet:
               path: /nginx_status
-              port: {{ .Values.nginx.siteStatusPort }}
-          {{- if .Values.nginx.resources.enabled }}
+              port: {{ .Values.siteStatusPort }}
+          {{- if .Values.resources.enabled }}
           resources:
-            {{- toYaml .Values.nginx.resources.value | nindent 12 }}
+            {{- toYaml .Values.resources.value | nindent 12 }}
           {{- end }}
           {{- if .Values.prometheusExporter.enabled }}
         - name: nginx-prometheus-exporter

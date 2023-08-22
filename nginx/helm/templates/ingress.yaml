@@ -22,6 +22,6 @@ spec:
           service:
             name: {{ printf "%s-service" (include "nginx.fullname" .) }}
             port:
-              number: {{ .Values.nginx.port }}
+              number: {{ .Values.port }}
     host: {{ .Values.ingress.host | quote }}
 {{- end -}}

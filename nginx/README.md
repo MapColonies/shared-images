@@ -74,17 +74,17 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 
 | Name | Description | Value |
 | ------------------------------------ | ----------------------------------------------------------- | ------- |
-`nginx.image.repository` | Docker image name | `nginx`
-`nginx.image.tag` | Docker image tag | `latest`
-`nginx.resources.enabled` | Use custom resources | `true`
-`nginx.resources.value.limits.cpu` | Pod CPU limit | `100m`
-`nginx.resources.value.limits.memory` | Pod memory limit | `128Mi`
-`nginx.resources.value.requests.cpu` | Pod CPU request | `100m`
-`nginx.resources.value.requests.memory` | Pod memory request | `128Mi`
-`nginx.default` | Override the `default.conf` file | `null`
-`nginx.conf` | Override the `nginx.conf` file | `null`
-`nginx.logFormat` | Overide the `log_format.conf` file | `null`
-`nginx.additionalPodAnnotations` | Use this property in order to add custom annotations to the Pod | `{}`
+`image.repository` | Docker image name | `nginx`
+`image.tag` | Docker image tag | `latest`
+`resources.enabled` | Use custom resources | `true`
+`resources.value.limits.cpu` | Pod CPU limit | `100m`
+`resources.value.limits.memory` | Pod memory limit | `128Mi`
+`resources.value.requests.cpu` | Pod CPU request | `100m`
+`resources.value.requests.memory` | Pod memory request | `128Mi`
+`defaultConf` | Override the `default.conf` file | `null`
+`nginxConf` | Override the `nginx.conf` file | `null`
+`logFormat` | Overide the `log_format.conf` file | `null`
+`additionalPodAnnotations` | Use this property in order to add custom annotations to the Pod | `{}`
 `env.opentelemetry.serviceName` | OpenTelemetry service name to be associated your NGINX application | `nginx`
 `env.opentelemetry.exporterEndpoint` | OpenTelemetry Collector endpoint address | `localhost:4317`
 `env.opentelemetry.samplerMethod` | OpenTelemetry sampling method | `AlwaysOff`
