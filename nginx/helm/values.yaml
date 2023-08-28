@@ -21,42 +21,41 @@ caSecretName: ''
 caPath: '/usr/local/share/ca-certificates'
 caKey: 'ca.crt'
 
-nginx:
-  image:
-    repository: nginx
-    tag: 'latest' 
-  port: 8080
-  internalServicePort: 80
-  targetPort: 8080
-  siteStatusPort: 8081
-  nodePort: 30001
-  resources:
-    enabled: true
-    value:
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-  additionalPodAnnotations:
-    {}
+image:
+  repository: nginx
+  tag: 'latest' 
+port: 8080
+internalServicePort: 80
+targetPort: 8080
+siteStatusPort: 8081
+nodePort: 30001
+resources:
+  enabled: true
+  value:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+additionalPodAnnotations:
+  {}
 
-  # NGINX default.conf override
-  # e.g:
-  # default: |-
-  # server {
-  #   listen 8080;
-  # }
-  # You can also "paste" configurations from different files, using:
-  # {{ range .Files.Lines }}
-  default: ''
+# NGINX default.conf override
+# e.g:
+# default: |-
+# server {
+#   listen 8080;
+# }
+# You can also "paste" configurations from different files, using:
+# {{ range .Files.Lines }}
+defaultConf: ''
 
-  # NGINX nginx.conf override
-  conf: ''
+# NGINX nginx.conf override
+nginxConf: ''
 
-  # NGINX log_format.conf override
-  logFormat: ''
+# NGINX log_format.conf override
+logFormat: ''
 
 env:
   opentelemetry:
