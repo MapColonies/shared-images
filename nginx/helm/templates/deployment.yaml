@@ -26,9 +26,6 @@ spec:
         release: {{ .Release.Name }}
         run: {{ .Release.Name }}-nginx
       annotations:
-        {{- if .Values.resetOnConfigChange }}
-        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- end -}}
         {{- if .Values.prometheusExporter.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: {{ $prometheusExporterPort | quote }}
@@ -42,9 +39,7 @@ spec:
         - name: {{ $cloudProviderImagePullSecretName | quote }}
     {{- end }}
       volumes:
-        - name: nginx-config
-          configMap:
-            name: {{ printf "%s-configmap" (include "nginx.fullname" .) }}
+        {{- tpl (toYaml .Values.extraVolumes) . | nindent 8 }}
       containers:
         - name: nginx-container
           {{- with .Values.image }}
@@ -63,18 +58,7 @@ spec:
           - name: OTEL_TRACES_SAMPLER_PARENT_BASED
             value: {{ .Values.env.opentelemetry.parentBased | quote }}
           volumeMounts:
-          - mountPath: "/etc/nginx/conf.d/default.conf"
-            name: nginx-config
-            readOnly: true
-            subPath: default.conf
-          - mountPath: "/etc/nginx/nginx.conf"
-            name: nginx-config
-            subPath: nginx.conf
-            readOnly: true
-          - mountPath: "/etc/nginx/log_format.conf"
-            name: nginx-config
-            readOnly: true
-            subPath: log_format.conf
+            {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ .Values.targetPort }}

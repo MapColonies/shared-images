@@ -22,14 +22,14 @@ spec:
   to:
     kind: Service
     name: {{ printf "%s-service" (include "nginx.fullname" .) }}
-  {{- if .Values.route.https }}
+  {{- if .Values.route.tls.enabled }}
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
-    {{- if .Values.route.useCert }}
-    certificate: {{ .Files.Get "config/cert.pem" | quote }}
-    key: {{ .Files.Get "config/key.pem" | quote }}
-    caCertificate: {{ .Files.Get "config/cacert.pem" | quote }}
+    {{- if .Values.route.tls.useCerts }}
+    certificate: {{ .Values.route.tls.certificate | quote }}
+    key: {{ .Values.route.tls.key | quote }}
+    caCertificate: {{ .Values.route.tls.caCertificate | quote }}
     {{- end }}
   {{- end -}}
 {{- end -}}

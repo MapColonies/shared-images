@@ -3,7 +3,6 @@ global:
   tracing: {}
   metrics: {}
   environment: {}
-  authentication:
 
 enabled: true
 environment: development
@@ -41,21 +40,8 @@ resources:
 additionalPodAnnotations:
   {}
 
-# NGINX default.conf override
-# e.g:
-# default: |-
-# server {
-#   listen 8080;
-# }
-# You can also "paste" configurations from different files, using:
-# {{ range .Files.Lines }}
-defaultConf: ''
-
-# NGINX nginx.conf override
-nginxConf: ''
-
-# NGINX log_format.conf override
-logFormat: ''
+extraVolumes: []
+extraVolumeMounts:  []
 
 env:
   opentelemetry:
@@ -90,12 +76,16 @@ route:
   enabled: true
   path: /
   host: 
-  https: true
   timeout:
     enabled: false # defaults to 30s by openshift
     duration: 60s # supported units (us, ms, s, m, h, d)
-  useCert: false
   rewriteTarget: ''
+  tls:
+    enabled: true
+    useCerts: false
+    certificate: ''
+    key: ''
+    caCertificate: ''
 
 ingress:
   enabled: false
