@@ -42,7 +42,7 @@ additionalPodAnnotations:
 
 # Add extra volumes to the Deployment, for example
 # - name: nginx-config
-#  configMap:
+#   configMap:
 #    name: 'nginx-configmap'
 extraVolumes: []
 
