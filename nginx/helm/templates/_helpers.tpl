@@ -112,5 +112,17 @@ annotations:
 Returns the port for NGINX Prometheus Exporter
 */}}
 {{- define "prometheusExporter.targetPort" -}}
-{{- printf "9113" -}}
+    {{- printf "9113" -}}
+{{- end -}}
+
+{{/*
+    Create a list of subPaths off the extraVolumeMounts in order to prevent conflict
+    with user's subPaths list
+*/}}
+{{- define "listOfSubPaths" -}}
+    {{- $subPathsList := list -}}
+    {{- range .Values.extraVolumeMounts -}}
+        {{- $subPathsList = append $subPathsList .subPath -}}
+    {{- end -}}
+    {{ toJson $subPathsList }}
 {{- end -}}
