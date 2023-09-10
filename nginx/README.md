@@ -81,9 +81,6 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `resources.value.limits.memory` | Pod memory limit | `128Mi`
 `resources.value.requests.cpu` | Pod CPU request | `100m`
 `resources.value.requests.memory` | Pod memory request | `128Mi`
-`defaultConf` | Override the `default.conf` file | `null`
-`nginxConf` | Override the `nginx.conf` file | `null`
-`logFormat` | Overide the `log_format.conf` file | `null`
 `additionalPodAnnotations` | Use this property in order to add custom annotations to the Pod | `{}`
 `env.opentelemetry.serviceName` | OpenTelemetry service name to be associated your NGINX application | `nginx`
 `env.opentelemetry.exporterEndpoint` | OpenTelemetry Collector endpoint address | `localhost:4317`
@@ -94,7 +91,23 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `authorization.domain` | Your authorization domain | `example`
 `authorization.url` | Authorization endpoint | `http://localhost:8181/v1/data/http/authz/decision`
 `route.enabled` | Expose NGINX as an Openshift route | `true`
+`route.path` | Path of route | `/`
+`route.host` | Host of route | ` `
+`route.timeout.enabled` | Use custom timeout duration of the route | `false`
+`route.timeout.duration` | Set the timeout duration of the route. Defaults to 30s by Openshift | `60s`
+`route.rewriteTarget` | Rewrite route target | ` `
+`route.tls.enabled` | Use route over HTTPS | `true`
+`route.tls.useCerts` | Use custom certificates for the route | `false`
+`route.tls.certificate` | Set the certificate of the route | ` `
+`route.tls.key` | Set the key of the route | ` `
+`route.tls.caCertificate` | Set the CA certificate of the route | ` `
 `ingress.enabled` | Expose NGINX as an Ingress | `false`
+`ingress.path` | Path of ingress | `/`
+`ingress.host` | Host of ingress | `localhost`
+`ingress.tls.enabled` | Use ingress over HTTPS | `true`
+`ingress.tls.secretName` | Secret name of ingress that points to the relevant custom certificates | ` `
+`extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
+`extraVolumeMounts` | List of extra *volumeMounts* that are added to the **NGINX container** | `[]`
 
 #### Overriding NGINX configuration files (nginx.conf, deafult.conf, log_format.conf)
 If you wish to override the default configuration files, you need to change their value in the `values.yaml`.
