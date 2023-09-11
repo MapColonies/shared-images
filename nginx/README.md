@@ -94,9 +94,11 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `route.path` | Path of route | `/`
 `route.host` | Host of route | ` `
 `route.timeout.enabled` | Use custom timeout duration of the route | `false`
-`route.timeout.duration` | Set the timeout duration of the route. Defaults to 30s by Openshift | `60s`
+`route.timeout.durationSeconds` | Set the timeout duration of the route. Defaults to 30s by Openshift | `60s`
 `route.rewriteTarget` | Rewrite route target | ` `
 `route.tls.enabled` | Use route over HTTPS | `true`
+`route.tls.termination` | Set the termination of the route | `false`
+`route.tls.insecureEdgeTerminationPolicy` | Policy for traffic on insecure schemes like HTTP | `false`
 `route.tls.useCerts` | Use custom certificates for the route | `false`
 `route.tls.certificate` | Set the certificate of the route | ` `
 `route.tls.key` | Set the key of the route | ` `
@@ -109,20 +111,30 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
 `extraVolumeMounts` | List of extra *volumeMounts* that are added to the **NGINX container** | `[]`
 
-#### Overriding NGINX configuration files (nginx.conf, deafult.conf, log_format.conf)
-If you wish to override the default configuration files, you need to change their value in the `values.yaml`.
-For example, let's say I want to override the default `log_format.conf` file - I'll then go to the `nginx.logFormat` property and replace its value with my custom log format:
+#### Overriding NGINX configuration files
+If you wish to override the default configuration files, you can do it by providing an external ConfigMap and supplying Volumes & VolumeMounts that'll be added to the Deployment.
+In this example we override the `default.conf` file by creating a ConfigMap and overriding the `extraVolumes` and `extraVolumeMounts` sections:
 ```
-nginx:
-  # ... multiple configurations ...
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-extra-configmap
+data:
+  default.conf: {{ tpl (.Files.Get "config/default.conf") . | quote }}
+```
 
-  logFormat: |- 
-    log_format main escape=json 
-    '{'
-      '"Attributes":{'
-          '"foo":"bar"'
-      '}'
-    '}';
+And then, in the `values.yaml` file:
+```
+...
+extraVolumes:
+  - name: nginx-extra-config
+    configMap:
+    name: 'nginx-extra-configmap'
+extraVolumeMounts:
+  - name: nginx-extra-config
+    mountPath: "/etc/nginx/conf.d/default.conf"
+    subPath: default.conf
+...
 ```
 
 #### Adding Custom Annotations
