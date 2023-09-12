@@ -1,5 +1,7 @@
 # NGINX Docker Image & Helm Chart for Openshift
 
+## Application Architecture Overview
+
 ![Application Architecture Overview](architecture.png)
   
 
