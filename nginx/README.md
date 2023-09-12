@@ -1,8 +1,6 @@
-
-  
-
 # NGINX Docker Image & Helm Chart for Openshift
 
+![Application Architecture Overview](architecture.png)
   
 
 This repository consists of two things:
