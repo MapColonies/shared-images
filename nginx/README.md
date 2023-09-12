@@ -1,8 +1,8 @@
-
-  
-
 # NGINX Docker Image & Helm Chart for Openshift
 
+## Application Architecture Overview
+
+![Application Architecture Overview](architecture.png)
   
 
 This repository consists of two things:
@@ -81,9 +81,6 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `resources.value.limits.memory` | Pod memory limit | `128Mi`
 `resources.value.requests.cpu` | Pod CPU request | `100m`
 `resources.value.requests.memory` | Pod memory request | `128Mi`
-`defaultConf` | Override the `default.conf` file | `null`
-`nginxConf` | Override the `nginx.conf` file | `null`
-`logFormat` | Overide the `log_format.conf` file | `null`
 `additionalPodAnnotations` | Use this property in order to add custom annotations to the Pod | `{}`
 `env.opentelemetry.serviceName` | OpenTelemetry service name to be associated your NGINX application | `nginx`
 `env.opentelemetry.exporterEndpoint` | OpenTelemetry Collector endpoint address | `localhost:4317`
@@ -94,22 +91,50 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `authorization.domain` | Your authorization domain | `example`
 `authorization.url` | Authorization endpoint | `http://localhost:8181/v1/data/http/authz/decision`
 `route.enabled` | Expose NGINX as an Openshift route | `true`
+`route.path` | Path of route | `/`
+`route.host` | Host of route | ` `
+`route.timeout.enabled` | Use custom timeout duration of the route | `false`
+`route.timeout.durationSeconds` | Set the timeout duration of the route. Defaults to 30s by Openshift | `60s`
+`route.rewriteTarget` | Rewrite route target | ` `
+`route.tls.enabled` | Use route over HTTPS | `true`
+`route.tls.termination` | Set the termination of the route | `false`
+`route.tls.insecureEdgeTerminationPolicy` | Policy for traffic on insecure schemes like HTTP | `false`
+`route.tls.useCerts` | Use custom certificates for the route | `false`
+`route.tls.certificate` | Set the certificate of the route | ` `
+`route.tls.key` | Set the key of the route | ` `
+`route.tls.caCertificate` | Set the CA certificate of the route | ` `
 `ingress.enabled` | Expose NGINX as an Ingress | `false`
+`ingress.path` | Path of ingress | `/`
+`ingress.host` | Host of ingress | `localhost`
+`ingress.tls.enabled` | Use ingress over HTTPS | `true`
+`ingress.tls.secretName` | Secret name of ingress that points to the relevant custom certificates | ` `
+`extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
+`extraVolumeMounts` | List of extra *volumeMounts* that are added to the **NGINX container** | `[]`
 
-#### Overriding NGINX configuration files (nginx.conf, deafult.conf, log_format.conf)
-If you wish to override the default configuration files, you need to change their value in the `values.yaml`.
-For example, let's say I want to override the default `log_format.conf` file - I'll then go to the `nginx.logFormat` property and replace its value with my custom log format:
+#### Overriding NGINX configuration files
+If you wish to override the default configuration files, you can do it by providing an external ConfigMap and supplying Volumes & VolumeMounts that'll be added to the Deployment.
+In this example we override the `default.conf` file by creating a ConfigMap and overriding the `extraVolumes` and `extraVolumeMounts` sections:
 ```
-nginx:
-  # ... multiple configurations ...
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-extra-configmap
+data:
+  default.conf: {{ tpl (.Files.Get "config/default.conf") . | quote }}
+```
 
-  logFormat: |- 
-    log_format main escape=json 
-    '{'
-      '"Attributes":{'
-          '"foo":"bar"'
-      '}'
-    '}';
+And then, in the `values.yaml` file:
+```
+...
+extraVolumes:
+  - name: nginx-extra-config
+    configMap:
+    name: 'nginx-extra-configmap'
+extraVolumeMounts:
+  - name: nginx-extra-config
+    mountPath: "/etc/nginx/conf.d/default.conf"
+    subPath: default.conf
+...
 ```
 
 #### Adding Custom Annotations

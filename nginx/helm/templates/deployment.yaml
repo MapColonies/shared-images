@@ -3,6 +3,7 @@
 {{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
 {{- $prometheusExporterPort := include "prometheusExporter.targetPort" . -}}
+{{- $listOfSubPaths := include "listOfSubPaths" . | fromJsonArray -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,9 +27,6 @@ spec:
         release: {{ .Release.Name }}
         run: {{ .Release.Name }}-nginx
       annotations:
-        {{- if .Values.resetOnConfigChange }}
-        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- end -}}
         {{- if .Values.prometheusExporter.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/port: {{ $prometheusExporterPort | quote }}
@@ -42,9 +40,12 @@ spec:
         - name: {{ $cloudProviderImagePullSecretName | quote }}
     {{- end }}
       volumes:
-        - name: nginx-config
-          configMap:
-            name: {{ printf "%s-configmap" (include "nginx.fullname" .) }}
+        - name: nginx-base-config
+          configMap:	
+            name: {{ printf "%s-base-configmap" (include "nginx.fullname" .) }}
+          {{- if .Values.extraVolumes }}
+            {{ tpl (toYaml .Values.extraVolumes) . | nindent 8 }}
+          {{- end }}
       containers:
         - name: nginx-container
           {{- with .Values.image }}
@@ -63,18 +64,24 @@ spec:
           - name: OTEL_TRACES_SAMPLER_PARENT_BASED
             value: {{ .Values.env.opentelemetry.parentBased | quote }}
           volumeMounts:
-          - mountPath: "/etc/nginx/conf.d/default.conf"
-            name: nginx-config
-            readOnly: true
-            subPath: default.conf
-          - mountPath: "/etc/nginx/nginx.conf"
-            name: nginx-config
-            subPath: nginx.conf
-            readOnly: true
-          - mountPath: "/etc/nginx/log_format.conf"
-            name: nginx-config
-            readOnly: true
-            subPath: log_format.conf
+            {{ if not (has "default.conf" $listOfSubPaths ) }}
+            - name: nginx-base-config
+              mountPath: "/etc/nginx/conf.d/default.conf"
+              subPath: default.conf
+            {{- end -}}
+            {{ if not (has "nginx.conf" $listOfSubPaths )}}
+            - name: nginx-base-config
+              mountPath: "/etc/nginx/nginx.conf"
+              subPath: nginx.conf
+            {{- end -}}
+            {{ if not (has "log_format.conf" $listOfSubPaths )}}
+            - name: nginx-base-config
+              mountPath: "/etc/nginx/log_format.conf"
+              subPath: log_format.conf
+            {{- end -}}
+              {{- if .Values.extraVolumeMounts }}
+                {{ toYaml .Values.extraVolumeMounts | nindent 12 }}
+              {{- end }} 
           ports:
             - name: http
               containerPort: {{ .Values.targetPort }}
