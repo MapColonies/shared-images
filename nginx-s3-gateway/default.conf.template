@@ -140,6 +140,10 @@ server {
 
         proxy_pass ${S3_SERVER_PROTO}://storage_urls$s3uri;
 
+        add_header cross-origin-resource-policy $cross-origin always;         
+        add_header cross-origin-embedder-policy $same-origin always;         
+        add_header cross-origin-opener-policy $cross-origin always;
+
         include /etc/nginx/conf.d/gateway/s3_location.conf;
     }
 
