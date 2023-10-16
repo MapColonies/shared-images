@@ -87,8 +87,7 @@ server {
         # @s3, @s3Listing or @error405.
 
         js_content s3gateway.redirectToS3;
-
-        
+   
     }
 
     location /aws/credentials/retrieve {
@@ -143,7 +142,6 @@ server {
         proxy_pass ${S3_SERVER_PROTO}://storage_urls$s3uri;
 
       
-        
         include /etc/nginx/conf.d/gateway/s3_location.conf;
     }
 
