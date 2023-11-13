@@ -70,6 +70,12 @@ server {
     }
 
     location / {
+        set $original_method $request_method;
+        set $original_args $args;
+
+        set $domain example;
+        auth_request /_validate_jwt;
+
         # This value is templated in based on the value of CORS_ENABLED. When
         # CORS is enabled, acceptable methods are GET, HEAD, and OPTIONS.
         # Otherwise, they are GET and HEAD.
@@ -88,6 +94,19 @@ server {
 
         js_content s3gateway.redirectToS3;
     }
+
+    location = /_validate_jwt {
+      internal;
+
+      js_content auth.opaAuth;
+    }
+
+    location = /opa {
+      internal;
+
+      proxy_set_header Content-Type application/json;
+      proxy_pass {{ .Values.authorization.url }};
+    }        
 
     location /aws/credentials/retrieve {
         internal;
