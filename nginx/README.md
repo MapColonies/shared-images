@@ -74,6 +74,8 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 
 | Name | Description | Value |
 | ------------------------------------ | ----------------------------------------------------------- | ------- |
+`nameOverride` | String to partially override fullname template (will maintain the release name) | `""`
+`fullnameOverride` | String to fully override fullname template	 | `""`
 `image.repository` | Docker image name | `nginx`
 `image.tag` | Docker image tag | `latest`
 `resources.enabled` | Use custom resources | `true`
