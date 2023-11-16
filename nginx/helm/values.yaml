@@ -11,6 +11,10 @@ initialDelaySeconds: 60
 resetOnConfigChange: true
 imagePullPolicy: Always
 
+
+nameOverride: ""
+fullnameOverride: ""
+
 cloudProvider:
   dockerRegistryUrl: my-registry-url
   imagePullSecretName: imagepullsecret
