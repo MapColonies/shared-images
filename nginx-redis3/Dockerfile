@@ -4,7 +4,7 @@ RUN apt update && apt install -y wget build-essential git zlib1g-dev curl libpcr
 
 WORKDIR /work
 
-## BASE NGINX
+## BASE NGINX 
 RUN wget https://openresty.org/download/nginx-1.25.3.tar.gz \
     && tar -xzvf nginx-1.25.3.tar.gz
 
@@ -17,14 +17,18 @@ RUN git clone https://github.com/openresty/luajit2 \
 ENV LUAJIT_LIB=/usr/local/lib/
 ENV LUAJIT_INC=/usr/local/include/luajit-2.1
 
-## CLONE REPOS
-RUN git clone https://github.com/openresty/lua-nginx-module.git
-RUN git clone https://github.com/vision5/ngx_devel_kit
-RUN git clone https://github.com/openresty/srcache-nginx-module.git
-RUN git clone https://github.com/openresty/set-misc-nginx-module.git
-RUN git clone https://github.com/openresty/headers-more-nginx-module.git
+## CLONE OPENRESTY REPOS
+RUN git clone https://github.com/vision5/ngx_devel_kit \
+    && cd /work \
+    && git clone https://github.com/openresty/lua-nginx-module.git \
+    && cd /work \
+    && git clone https://github.com/openresty/srcache-nginx-module.git \
+    && cd /work \
+    && git clone https://github.com/openresty/set-misc-nginx-module.git \
+    && cd /work \
+    && git clone https://github.com/openresty/headers-more-nginx-module.git
 
-## COMPILE NGINX
+## COMPILE NGINX FOR THE DYNAMIC MODULES
 RUN cd nginx-1.25.3 \
     && ./configure --prefix=/etc/nginx \
     --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log \
@@ -46,29 +50,31 @@ RUN cd nginx-1.25.3 \
     && make -j2 \
     && make install
 
-## ADD-ONS
+## ADD-ONS THAT DOES NOT NEED COMPLIATION
 RUN git clone https://github.com/openresty/lua-resty-core.git \
     && cd lua-resty-core \
-    && make install PREFIX=/etc/nginx
-
-RUN git clone https://github.com/openresty/lua-resty-lrucache.git \
+    && make install PREFIX=/etc/nginx \
+    && cd /work \
+    && git clone https://github.com/openresty/lua-resty-lrucache.git \
     && cd lua-resty-lrucache \
-    && make install PREFIX=/etc/nginx
-
-RUN git clone https://github.com/openresty/lua-resty-redis.git \
+    && make install PREFIX=/etc/nginx \
+    && cd /work \
+    && git clone https://github.com/openresty/lua-resty-redis.git \
     && cd lua-resty-redis \
     && make install PREFIX=/etc/nginx
 
 
 ## NGINX-S3-GATEWAY
+
 FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:unprivileged-oss-20231102
 
 USER root
 
+## EXPORT PATHS OF LUA
 ENV LUAJIT_LIB=/usr/local/lib/
 ENV LUAJIT_INC=/usr/local/include/luajit-2.1
 
-## COPY THE MODULES TO NGINX-S3-GATEWAY
+## COPY THE MODULES FROM BUILDER STAGE TO NGINX-S3-GATEWAY
 COPY --from=BUILDER /work/nginx-1.25.3/objs/*.so /etc/nginx/modules/
 COPY --from=BUILDER /etc/nginx/lib /etc/nginx/lib
 COPY --from=BUILDER /usr/local/lib/ /usr/local/lib
