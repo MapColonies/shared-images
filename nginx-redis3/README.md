@@ -44,14 +44,20 @@ docker build -t nginx-redis3 .
 To run a container based on the newly created image:
 
 ```bash
-docker container run -p 8080:8080 nginx-redis3 -e S3_BUCKET_NAME=redis3 -e S3_SERVER=127.0.0.1 -e S3_SERVER_PORT=9000   -e S3_SERVER_PROTO=http   -e S3_REGION=us-east-1   -e S3_STYLE=path   -e ALLOW_DIRECTORY_LIST=true   -e AWS_SIGS_VERSION=4   -e AWS_ACCESS_KEY_ID=minioadmin  -e AWS_SECRET_ACCESS_KEY=minioadmin   -e CORS_ENABLED=true   -e NGINX_WORKER_PROCESSES=4   -e PROXY_CACHE_MAX_SIZE=10g   -e PROXY_CACHE_INACTIVE=60m   -e PROXY_CACHE_VALID_OK=1h   -e PROXY_CACHE_VALID_NOTFOUND=1m   -e PROXY_CACHE_VALID_FORBIDDEN=30s
+docker container run -p 8080:8080 nginx-redis3 -e S3_BUCKET_NAME=redis3 \
+    -e S3_SERVER=127.0.0.1 -e S3_SERVER_PORT=9000 -e S3_SERVER_PROTO=http \
+    -e S3_REGION=us-east-1 -e S3_STYLE=path -e ALLOW_DIRECTORY_LIST=true -e AWS_SIGS_VERSION=4 \
+    -e AWS_ACCESS_KEY_ID=minioadmin -e AWS_SECRET_ACCESS_KEY=minioadmin \
+    -e CORS_ENABLED=true   -e NGINX_WORKER_PROCESSES=4   -e PROXY_CACHE_MAX_SIZE=10g \
+    -e PROXY_CACHE_INACTIVE=60m -e PROXY_CACHE_VALID_OK=1h -e PROXY_CACHE_VALID_NOTFOUND=1m \
+    -e PROXY_CACHE_VALID_FORBIDDEN=30s
 ```
 
 This command will expose NGINX, providing access to the S3 gateway with Redis integration.
 
 ## Customization
 
-Feel free to customize the NGINX configuration files (`nginx.conf.template` and `default.conf.template`) and environment variables to suit your specific requirements.
+Feel free to customize the NGINX configuration files (`nginx.conf` and `default.conf`) and environment variables to suit your specific requirements.
 
 ## Testing
 
