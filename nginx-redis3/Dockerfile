@@ -80,8 +80,6 @@ COPY --from=BUILDER /etc/nginx/lib /etc/nginx/lib
 COPY --from=BUILDER /usr/local/lib/ /usr/local/lib
 
 COPY 21-envsubst-on-nginx-conf.sh /docker-entrypoint.d
-COPY nginx.conf /etc/nginx/nginx.conf.template
-COPY default.conf /etc/nginx/templates/default.conf.template
 
 RUN chmod +x /docker-entrypoint.d/21-envsubst-on-nginx-conf.sh
 

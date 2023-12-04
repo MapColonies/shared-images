@@ -49,7 +49,8 @@ docker container run -p 8080:8080 nginx-redis3 -e S3_BUCKET_NAME=redis3 \
     -e S3_REGION=us-east-1 -e S3_STYLE=path -e ALLOW_DIRECTORY_LIST=true -e AWS_SIGS_VERSION=4 \
     -e AWS_ACCESS_KEY_ID=minioadmin -e AWS_SECRET_ACCESS_KEY=minioadmin \
     -e CORS_ENABLED=true   -e NGINX_WORKER_PROCESSES=4 \
-    -e REDIS_SKIP_CACHE=0 -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=6379 -e REDIS_CACHE_EXPIRATION_TIME=1000
+    -e REDIS_SKIP_CACHE=0 -e REDIS_HOST=127.0.0.1 -e REDIS_PORT=6379 -e REDIS_CACHE_EXPIRATION_TIME=1000 \
+    -e REDIS_CONNECT_TIMEOUT=100 -e REDIS_SEND_TIMEOUT=100 -e REDIS_READ_TIMEOUT=100 -e REDIS_AUTH=bla
 ```
 
 This command will expose NGINX, providing access to the S3 gateway with Redis integration.
@@ -65,3 +66,8 @@ The Dockerfile has been tested locally to ensure proper integration of the Redis
 ## Future Considerations
 
 This Dockerfile provides a solid foundation for NGINX with Redis support. Future enhancements may include additional Redis-related configurations and features based on project requirements (e.g., prometheus).
+
+## Use Cases
+
+* When Redis is down, requests will be sent directly to S3
+* When a request is taking longer than expected in redis, the request will be sent to S3
