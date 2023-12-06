@@ -13,7 +13,7 @@ Configuring `nginxinc/nginx-s3-gateway` image to act as an authenticating and ca
 * Protecting a S3 bucket with a WAF
 * Serving static assets from a S3 bucket alongside a dynamic application endpoints all in a single RESTful directory structure
 
-# NGINX-S3-Gateway with Redis Feature
+# NGINX-S3-Gateway with Lua and Redis Feature
 
 This Dockerfile enhances the NGINX-S3-Gateway image by adding Redis support using OpenResty. The resulting image provides a powerful and extensible NGINX setup for S3 gateway functionality with the added benefits of Lua scripting and Redis integration.
 
@@ -25,24 +25,20 @@ This Dockerfile enhances the NGINX-S3-Gateway image by adding Redis support usin
 2. **Installation of Build Dependencies:**
    - Essential packages, including `wget`, `build-essential`, and required libraries, are installed to facilitate the subsequent build process.
 
-3. **Workspace Configuration:**
-   - A working directory named "work" is created to organize and execute the build process.
-
-4. **NGINX Compilation with OpenResty Modules:**
+3. **NGINX Compilation with OpenResty Modules:**
    - The OpenResty NGINX modules (e.g., lua-nginx-module and srcache-nginx-module) are cloned into the workspace.
    - LuaJIT is cloned and installed, and environment variables (`LUAJIT_LIB` and `LUAJIT_INC`) are set to ensure correct library paths.
    - NGINX is configured using the `./configure` script with various modules and options, including dynamic modules for OpenResty.
    - NGINX is then compiled (`make`) and installed (`make install`).
 
-5. **Add-ons Installation:**
+4. **Add-ons Installation:**
    - Additional Lua modules that do not require compilation (e.g., lua-resty-redis) are cloned and installed.
 
-6. **Integration with NGINX-S3-Gateway Image:**
+5. **Integration with NGINX-S3-Gateway Image:**
    - The NGINX-S3-Gateway image is used as the base for further modifications.
-   - LuaJIT environment variables are set to maintain consistency.
    - The compiled NGINX modules, libraries, and additional Lua modules are copied from the build stage to the NGINX-S3-Gateway image.
 
-7. **Configuration and Entrypoint:**
+6. **Configuration and Entrypoint:**
    - Custom configuration files (`nginx.conf.template` and `default.conf.template`) are copied to their respective locations.
    - The entrypoint script is set as executable.
 
@@ -51,7 +47,7 @@ This Dockerfile enhances the NGINX-S3-Gateway image by adding Redis support usin
 To build the Docker image with the Redis feature:
 
 ```bash
-docker build -t nginx-redis3 .
+docker build -t nginx-s3-gateway .
 ```
 
 ## Running the Container
@@ -59,8 +55,8 @@ docker build -t nginx-redis3 .
 To run a container based on the newly created image:
 
 ```bash
-docker container run -p 8080:8080 --rm --name nginx-redis3 \
-   -e S3_BUCKET_NAME=redis3 \
+docker container run -p 8080:8080 --rm --name nginx-s3-gateway \
+   -e S3_BUCKET_NAME=bucketName \
    -e S3_SERVER=127.0.0.1 \
    -e S3_SERVER_PORT=9000 \
    -e S3_SERVER_PROTO=http \
@@ -73,15 +69,7 @@ docker container run -p 8080:8080 --rm --name nginx-redis3 \
    -e CORS_ENABLED=true \
    -e NGINX_WORKER_PROCESSES=4 \
    -e PROXY_CACHE_MAX_SIZE=10g \
-   -e REDIS_SKIP_CACHE=0 \
-   -e REDIS_HOST=127.0.0.1 \
-   -e REDIS_PORT=6379 \
-   -e REDIS_CACHE_EXPIRATION_TIME=1000 \
-   -e REDIS_CONNECT_TIMEOUT=100 \
-   -e REDIS_SEND_TIMEOUT=100 \
-   -e REDIS_READ_TIMEOUT=100 \
-   -e REDIS_AUTH=bla \
-   nginx-redis3 -d
+   nginx-s3-gateway
 ```
 
 This command will expose NGINX, providing access to the S3 gateway with Redis integration.
@@ -108,3 +96,27 @@ This Dockerfile provides a solid foundation for NGINX with Redis support. Future
 
 * When Redis is down, requests will be sent directly to S3
 * When a request is taking longer than expected in redis, the request will be sent to S3
+
+**## Example Deployment with Docker Compose**
+
+In the `examples` folder, you'll find a Docker Compose file (`docker-compose.yml`) along with NGINX configuration files (`nginx.conf` and `default.conf`). This example demonstrates a simplified deployment of NGINX-S3-Gateway with Redis integration.
+
+### Prerequisites
+
+Make sure you have Docker and Docker Compose installed on your system.
+
+
+### Deployment Steps
+
+Just navigate to the `example` folder and run:
+```bash
+docker-compose up -d
+```
+
+The docker-compose file contains 4 containers:
+1. nginx-s3-gateway - with all the required env for redis and S3.
+2. redis - for cache
+3. minio
+4. createbucket - for creating bucket in S3 (Optional).
+
+Make sure that every change are set in all containers (.e.g username for S3) and you got yourself nginx-redis3 to play with ;)
