@@ -31,6 +31,9 @@ This Dockerfile enhances the NGINX-S3-Gateway image by adding Redis support usin
    - NGINX is configured using the `./configure` script with various modules and options, including dynamic modules for OpenResty.
    - NGINX is then compiled (`make`) and installed (`make install`).
 
+   To determine the appropriate configuration for building NGINX with additional Lua and dynamic modules, I retrieved the configuration command using "nginx -V" within the desired version of NGINX. This ensures compatibility with the chosen NGINX version.
+   Executing "nginx -V" inside the container of the selected NGINX version helps guarantee that the configuration for building NGINX is as close as possible to the official NGINX version. This minimizes the risk of encountering binary compatibility issues during the build process.
+
 4. **Add-ons Installation:**
    - Additional Lua modules that do not require compilation (e.g., lua-resty-redis) are cloned and installed.
 
