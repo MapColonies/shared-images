@@ -1,12 +1,14 @@
-FROM debian as BUILDER
+FROM debian:12 as BUILDER
 
 RUN apt update && apt install -y wget build-essential git zlib1g-dev curl libpcre2-dev libssl-dev
 
 WORKDIR /work
 
-## BASE NGINX 
-RUN wget https://openresty.org/download/nginx-1.25.3.tar.gz \
-    && tar -xzvf nginx-1.25.3.tar.gz
+ARG BASE_NGINX_VERSION=1.25.3
+
+## BASE NGINX
+RUN wget https://openresty.org/download/nginx-${BASE_NGINX_VERSION}.tar.gz \
+    && tar -xzvf nginx-${BASE_NGINX_VERSION}.tar.gz
 
 ## LUA JIT
 RUN wget https://github.com/openresty/luajit2/archive/refs/tags/v2.1-20231117.tar.gz \
@@ -32,7 +34,7 @@ RUN wget https://github.com/vision5/ngx_devel_kit/archive/refs/tags/v0.3.3.tar.g
     && tar -xzvf v0.36.tar.gz
 
 ## COMPILE NGINX FOR THE DYNAMIC MODULES
-RUN cd nginx-1.25.3 \
+RUN cd nginx-${BASE_NGINX_VERSION} \
     && ./configure --prefix=/etc/nginx \
     --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log \
     --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock \
@@ -43,7 +45,7 @@ RUN cd nginx-1.25.3 \
     --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_realip_module --with-http_secure_link_module \
     --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-http_v3_module \
     --with-mail --with-mail_ssl_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module \
-    --with-cc-opt='-g -O2 -ffile-prefix-map=/data/builder/debuild/nginx-1.25.3/debian/debuild-base/nginx-1.25.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
+    --with-cc-opt='-g -O2 -ffile-prefix-map=/data/builder/debuild/nginx-${BASE_NGINX_VERSION}/debian/debuild-base/nginx-${BASE_NGINX_VERSION}=. -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
     --with-ld-opt='-Wl,-z,relro -Wl,-z,now -Wl,-rpath,/usr/local/lib,--as-needed -pie' \
     --add-dynamic-module=/work/ngx_devel_kit-0.3.3 \
     --add-dynamic-module=/work/lua-nginx-module-0.10.26rc1 \
@@ -53,7 +55,7 @@ RUN cd nginx-1.25.3 \
     && make -j2 \
     && make install
 
-## ADD-ONS THAT DOES NOT NEED COMPLIATION
+## ADD-ONS THAT DOES NOT NEED COMPILATION
 RUN git clone https://github.com/openresty/lua-resty-core.git \
     && cd lua-resty-core \
     && make install PREFIX=/etc/nginx \
@@ -72,12 +74,14 @@ FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:unprivileged-oss-202
 
 USER root
 
+ARG BASE_NGINX_VERSION=1.25.3
+
 ## EXPORT PATHS OF LUA
 ENV LUAJIT_LIB=/usr/local/lib/
 ENV LUAJIT_INC=/usr/local/include/luajit-2.1
 
 ## COPY THE MODULES FROM BUILDER STAGE TO NGINX-S3-GATEWAY
-COPY --from=BUILDER /work/nginx-1.25.3/objs/*.so /etc/nginx/modules/
+COPY --from=BUILDER /work/nginx-${BASE_NGINX_VERSION}/objs/*.so /etc/nginx/modules/
 COPY --from=BUILDER /etc/nginx/lib /etc/nginx/lib
 COPY --from=BUILDER /usr/local/lib/ /usr/local/lib
 
