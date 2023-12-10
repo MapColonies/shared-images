@@ -99,27 +99,3 @@ This Dockerfile provides a solid foundation for NGINX with Redis support. Future
 
 * When Redis is down, requests will be sent directly to S3
 * When a request is taking longer than expected in redis, the request will be sent to S3
-
-**## Example Deployment with Docker Compose**
-
-In the `examples` folder, you'll find a Docker Compose file (`docker-compose.yml`) along with NGINX configuration files (`nginx.conf` and `default.conf`). This example demonstrates a simplified deployment of NGINX-S3-Gateway with Redis integration.
-
-### Prerequisites
-
-Make sure you have Docker and Docker Compose installed on your system.
-
-
-### Deployment Steps
-
-Just navigate to the `example` folder and run:
-```bash
-docker-compose up -d
-```
-
-The docker-compose file contains 4 containers:
-1. nginx-s3-gateway - with all the required env for redis and S3.
-2. redis - for cache
-3. minio
-4. createbucket - for creating bucket in S3 (Optional).
-
-Make sure that every change are set in all containers (.e.g username for S3) and you got yourself nginx-redis3 to play with ;)
