@@ -10,8 +10,8 @@ services:
       - S3_STYLE=path
       - ALLOW_DIRECTORY_LIST=true
       - AWS_SIGS_VERSION=4
-      - AWS_ACCESS_KEY_ID=s3-user
-      - AWS_SECRET_ACCESS_KEY=s3-password
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
       - CORS_ENABLED=true
       - NGINX_WORKER_PROCESSES=4
       - REDIS_HOST=redis
@@ -31,29 +31,31 @@ services:
       - ./redis-get-key.lua:/etc/nginx/lua/redis-get-key.lua:ro
       - ./redis-set-key.lua:/etc/nginx/lua/redis-set-key.lua:ro
   redis:
-    image: redis
+    image: redis:alpine3.19
     ports:
       - 6379:6379
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2023-12-09T18-17-51Z.fips
     ports:
       - 9000:9000
       - 9001:9001
     environment:
-      - MINIO_ROOT_USER=s3-user
-      - MINIO_ROOT_PASSWORD=s3-password
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_DEFAULT_BUCKETS=s3-redis
     command: server /data --console-address ":9001"
 
-  # Optional: Sets a default bucket in minio
-  createbucket:
-    image: minio/mc
+  # Optional: Sets a default bucket and object in minio
+  createBucket:
+    image: minio/mc:RELEASE.2023-12-07T22-13-17Z.fips
+    volumes:
+      - ./minioData:/mnt/minioData:ro
     depends_on:
       - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 s3-user s3-password;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb myminio/s3-redis;
-      /usr/bin/mc policy set public myminio/s3-redis;
-      exit 0;
+      /usr/bin/mc anonymous set public myminio/s3-redis;
+      /usr/bin/mc cp --recursive mnt/minioData/ myminio/s3-redis/;
       "
