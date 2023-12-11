@@ -1,6 +1,6 @@
 # Example Deployment with Docker Compose**
 
-In the `examples` folder, you'll find a Docker Compose file (`docker-compose.yml`) along with NGINX configuration files (`nginx.conf` and `default.conf`) and redis configuration files (key handling files). This example demonstrates a simplified deployment of NGINX-S3-Gateway with Redis integration.
+In the `example` folder, you'll find a Docker Compose file (`docker-compose.yml`) along with NGINX configuration files (`nginx.conf` and `default.conf`) and redis configuration files (key handling files). This example demonstrates a simplified deployment of NGINX-S3-Gateway with Redis integration.
 
 ### Prerequisites
 

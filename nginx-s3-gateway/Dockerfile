@@ -55,7 +55,7 @@ RUN cd nginx-${BASE_NGINX_VERSION} \
     && make -j2 \
     && make install
 
-## ADD-ONS THAT DOES NOT NEED COMPILATION
+## ADD-ONS THAT DO NOT NEED COMPILATION
 RUN git clone https://github.com/openresty/lua-resty-core.git \
     && cd lua-resty-core \
     && make install PREFIX=/etc/nginx \
