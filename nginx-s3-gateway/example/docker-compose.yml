@@ -42,10 +42,12 @@ services:
       - ./minioData:/mnt/minioData:ro
     depends_on:
       - minio
+    env_file:
+      - .env
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
-      /usr/bin/mc mb myminio/s3-redis;
-      /usr/bin/mc anonymous set public myminio/s3-redis;
-      /usr/bin/mc cp --recursive mnt/minioData/ myminio/s3-redis/;
+      /usr/bin/mc alias set myminio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
+      /usr/bin/mc mb myminio/${S3_BUCKET_NAME};
+      /usr/bin/mc anonymous set public myminio/${S3_BUCKET_NAME};
+      /usr/bin/mc cp --recursive mnt/minioData/ myminio/${S3_BUCKET_NAME}/;
       "
