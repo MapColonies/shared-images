@@ -36,7 +36,7 @@ services:
     command: server /data --console-address ":9001"
 
   # Optional: Sets a default bucket and object in minio
-  createBucket:
+  createBucketAndObjectsOnS3:
     image: minio/mc:RELEASE.2023-12-07T22-13-17Z.fips
     volumes:
       - ./minioData:/mnt/minioData:ro
