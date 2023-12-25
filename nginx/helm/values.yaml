@@ -56,7 +56,7 @@ extraVolumes: []
 #   subPath: default.conf
 extraVolumeMounts: []
 
-# Add side car to the Pod, for example
+# Add side car to the Deployment, for example
 # - name: envoy
 #   image: "{{ .Values.envoy.image }}:{{ .Values.envoy.imageTag }}"
 #   volumeMounts: []
