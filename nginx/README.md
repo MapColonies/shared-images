@@ -112,10 +112,11 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `ingress.tls.secretName` | Secret name of ingress that points to the relevant custom certificates | ` `
 `extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
 `extraVolumeMounts` | List of extra *volumeMounts* that are added to the **NGINX container** | `[]`
+`sidecars` | List of sidecar containers that are added to the **Deployment** | `[]`
 
 #### Overriding NGINX configuration files
 If you wish to override the default configuration files, you can do it by providing an external ConfigMap and supplying Volumes & VolumeMounts that'll be added to the Deployment.
-In this example we override the `default.conf` file by creating a ConfigMap and overriding the `extraVolumes` and `extraVolumeMounts` sections:
+In this example we override the `default.conf` file by creating a ConfigMap and overriding the `extraVolumes`, `extraVolumeMounts` and `sidecars` sections:
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -136,6 +137,13 @@ extraVolumeMounts:
   - name: nginx-extra-config
     mountPath: "/etc/nginx/conf.d/default.conf"
     subPath: default.conf
+sidecars:
+ - name: envoy
+   image: "envoyproxy/envoy:v1.20.7"
+   volumeMounts: []
+   args: []
+   ports: []
+   resources: {}
 ...
 ```
 
