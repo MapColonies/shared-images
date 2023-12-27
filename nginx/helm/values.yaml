@@ -57,14 +57,15 @@ extraVolumes: []
 extraVolumeMounts: []
 
 # Add side car to the Deployment, for example
-# - name: envoy
-#   image: "{{ .Values.envoy.image }}:{{ .Values.envoy.imageTag }}"
-#   volumeMounts: []
-#   args: []
-#   ports: []
-#   resources:
-#   {{- toYaml .Values.envoy.resources.value | nindent 12 }}
-sidecars: []
+# sidecars: |-
+#   - name: envoy
+#     image: "{{ .Values.envoy.image }}:{{ .Values.envoy.imageTag }}"
+#     volumeMounts: []
+#     args: []
+#     ports: []
+#     resources:
+#     {{- toYaml .Values.envoy.resources.value | nindent 12 }}
+sidecars: ''
 
 env:
   opentelemetry:
