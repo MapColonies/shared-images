@@ -1,16 +1,26 @@
-FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20230703
+FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:unprivileged-oss-20231102
 
-COPY jwt.js /etc/nginx/jwt.js
+USER root
+
+# Replace nginx.conf file with our own
+COPY nginx.conf.template /etc/nginx
 COPY 21-envsubst-on-nginx-conf.sh /docker-entrypoint.d
-COPY default.conf.template /etc/nginx/templates
-COPY nginx.conf.template /etc/nginx/nginx.conf.template
+RUN chmod +x /docker-entrypoint.d/21-envsubst-on-nginx-conf.sh
 
-RUN chmod g+rwx -R /var/cache/nginx /var/run /var/log/nginx && \
-  chgrp -R root /var/cache/nginx /var/log/nginx && \
-  chmod -R g=u /etc/nginx && \
-  chmod -R +x /docker-entrypoint.d && \
-  addgroup nginx root
+ARG OPENTELEMETRY_CPP_VERSION=1.0.4
+ADD https://github.com/open-telemetry/opentelemetry-cpp-contrib/releases/download/webserver%2Fv${OPENTELEMETRY_CPP_VERSION}/opentelemetry-webserver-sdk-x64-linux.tgz /tmp
 
-EXPOSE 8080
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends dumb-init tar gzip \
+  && mkdir -p /opt/opentelemetry-webserver-sdk \
+  && gzip -dc /tmp/opentelemetry-webserver-sdk-x64-linux.tgz | tar -xvzf - -C /opt \
+  && rm -rf /tmp/opentelemetry-webserver-sdk-x64-linux.tgz \
+  && /opt/opentelemetry-webserver-sdk/install.sh 
+
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/opentelemetry-webserver-sdk/sdk_lib/lib
+RUN echo "load_module /opt/opentelemetry-webserver-sdk/WebServerModule/Nginx/1.25.3/ngx_http_opentelemetry_module.so;\n$(cat /etc/nginx/nginx.conf)" > /etc/nginx/nginx.conf
+COPY opentelemetry_module.conf /etc/nginx/conf.d
 
 USER nginx
+
+EXPOSE 8080
