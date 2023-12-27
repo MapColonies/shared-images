@@ -55,7 +55,7 @@ docker build -t nginx-s3-gateway .
 
 ## Running the Container
 
-To run a container based on the newly created image:
+To run a container:
 
 ```bash
 docker container run -p 8080:8080 --rm --name nginx-s3-gateway \
