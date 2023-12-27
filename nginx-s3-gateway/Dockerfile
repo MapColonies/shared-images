@@ -70,7 +70,7 @@ RUN git clone https://github.com/openresty/lua-resty-core.git \
 
 
 ## NGINX-S3-GATEWAY
-FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-20230703
+FROM ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:unprivileged-oss-20231102
 
 USER root
 
