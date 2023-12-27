@@ -112,7 +112,7 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `ingress.tls.secretName` | Secret name of ingress that points to the relevant custom certificates | ` `
 `extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
 `extraVolumeMounts` | List of extra *volumeMounts* that are added to the **NGINX container** | `[]`
-`sidecars` | List of sidecar containers that are added to the **Deployment** | `[]`
+`sidecars` | String consists of a list of sidecars containers that are added to the **Deployment** | ``
 
 #### Overriding NGINX configuration files
 If you wish to override the default configuration files, you can do it by providing an external ConfigMap and supplying Volumes & VolumeMounts that'll be added to the Deployment.
