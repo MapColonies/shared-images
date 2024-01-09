@@ -5,7 +5,8 @@ local maxIdleTimeout = os.getenv("REDIS_MAX_IDLE_TIMEOUT")
 local poolSize = os.getenv("REDIS_POOL_SIZE")
 local host = os.getenv("REDIS_HOST")
 local port = os.getenv("REDIS_PORT")
-local enableSSL = os.getenv("REDIS_SSL_ENABLED")
+local str2bool={ ["true"]=true, ["false"]=false }
+local enableSSL = str2bool[os.getenv("REDIS_SSL_ENABLED")]
 local requirePassword = os.getenv("REDIS_REQUIRE_PASSWORD")
 local password = os.getenv("REDIS_PASSWORD")
 local username = os.getenv("REDIS_USERNAME")
