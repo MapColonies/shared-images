@@ -67,7 +67,6 @@ extraVolumeMounts: []
 #     {{- toYaml .Values.envoy.resources.value | nindent 12 }}
 sidecars: ''
 
-
 env:
   opentelemetry:
     serviceName: nginx
