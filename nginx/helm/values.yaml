@@ -2,7 +2,7 @@ global:
   cloudProvider: {}
   tracing: {}
   metrics: {}
-  environment: {}
+  environment: ""
 
 enabled: true
 environment: development
@@ -65,7 +65,26 @@ extraVolumeMounts: []
 #     ports: []
 #     resources:
 #     {{- toYaml .Values.envoy.resources.value | nindent 12 }}
-sidecars: ''
+sidecars: |-
+  - name: envoy
+    image: hjkhk
+    volumeMounts:
+    - name: proxy-config
+      readOnly: true
+      mountPath: /config
+    - name: jwt-public-keys
+      readOnly: true
+      mountPath: /keys/mapColonies.jwks
+      subPath: mapColonies.jwks
+    args:
+    - "envoy"
+    - "--config-path"
+    - "/config/envoy.yaml"
+    ports:
+    - name: http
+      containerPort: 8000
+      protocol: TCP
+
 
 env:
   opentelemetry:
