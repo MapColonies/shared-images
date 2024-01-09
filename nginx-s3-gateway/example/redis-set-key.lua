@@ -34,7 +34,7 @@ if not ok then
 end
 
 if requirePassword == "true" then
-    local ok, err = red:auth(password)
+    local ok, err = red:auth(username, password)
     if not ok then
         ngx.log(ngx.ERR, "Failed to authenticate redis, error -> ", err)
         return ngx.exit(403)
