@@ -18,7 +18,7 @@ services:
       - .env
     command: >
       sh -c 'if [ "$REDIS_REQUIRE_PASSWORD" = "true" ]; then
-            exec redis-server --requirepass "$REDIS_PASSWORD";
+            exec redis-server --user "$REDIS_USERNAME" on \>"$REDIS_PASSWORD" ~* allcommands;
         else
             exec redis-server;
         fi'
