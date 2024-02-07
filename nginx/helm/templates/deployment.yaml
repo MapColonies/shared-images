@@ -11,7 +11,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-{{ $chartName }}
     component: nginx-deployment
-    environment: {{ .Values.environment }}
+    environment: {{ include "nginx.environment" . }}
     release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
