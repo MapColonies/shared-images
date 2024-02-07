@@ -1,4 +1,5 @@
 {{- if .Values.enabled -}}
+{{- $fullName := include "nginx.fullname" . -}}
 {{- $chartName := include "nginx.name" . -}}
 {{- $cloudProviderDockerRegistryUrl := include "nginx.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "nginx.cloudProviderImagePullSecretName" . -}}
@@ -9,7 +10,7 @@ kind: Deployment
 metadata:
   name: {{ printf "%s-deployment" (include "nginx.fullname" .) }}
   labels:
-    app: {{ .Release.Name }}-{{ $chartName }}
+    app: {{ $fullName | quote }}
     component: nginx-deployment
     environment: {{ include "nginx.environment" . }}
     release: {{ .Release.Name }}
@@ -17,13 +18,13 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-{{ $chartName }}
+      app: {{ $fullName | quote }}
       release: {{ .Release.Name }}
       run: {{ .Release.Name }}-nginx
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-{{ $chartName }}
+        app: {{ $fullName | quote }}
         release: {{ .Release.Name }}
         run: {{ .Release.Name }}-nginx
       annotations:
