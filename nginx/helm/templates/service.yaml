@@ -1,5 +1,6 @@
 
 {{- if .Values.enabled -}}
+{{- $fullName := include "nginx.fullname" . -}}
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "nginx.name" . -}}
 {{- $cloudProviderFlavor := include "nginx.cloudProviderFlavor" . -}}
@@ -9,7 +10,7 @@ kind: Service
 metadata:
   name: {{ printf "%s-service" (include "nginx.fullname" .) }}
   labels:
-    app: {{ $releaseName }}-{{ $chartName }}
+    app: {{ $fullName | quote }}
     component: nginx-service
     environment: {{ include "nginx.environment" . }}
     release: {{ .Release.Name }}
@@ -37,7 +38,7 @@ spec:
       name: prometheus-exporter
       {{- end }}
   selector:
-    app: {{ $releaseName }}-{{ $chartName }}
+    app: {{ $fullName | quote }}
     release: {{ .Release.Name }}
     run: {{ .Release.Name }}-nginx
 {{- end }}
