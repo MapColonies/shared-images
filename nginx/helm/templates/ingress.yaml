@@ -1,5 +1,6 @@
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "nginx.name" . -}}
+{{- $ingressHost := include "ingress.host" . -}}
 {{- if and (.Values.enabled) (.Values.ingress.enabled) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -23,5 +24,5 @@ spec:
             name: {{ printf "%s-service" (include "nginx.fullname" .) }}
             port:
               number: {{ .Values.port }}
-    host: {{ .Values.ingress.host | quote }}
+    host: {{ $ingressHost }}
 {{- end -}}

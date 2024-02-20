@@ -130,3 +130,14 @@ Returns the port for NGINX Prometheus Exporter
     {{- end -}}
     {{ toJson $subPathsList }}
 {{- end -}}
+
+{{/*
+Returns the full ingress host.
+*/}}
+{{- define "ingress.host" -}}
+{{- if .Values.ingress.host }}
+    {{- .Values.ingress.host -}}
+{{- else -}}
+{{- printf "%s-%s.%s" .Release.Name .Chart.Name .Values.global.ingress.domain | indent 1 }}
+{{- end -}}
+{{- end -}}
