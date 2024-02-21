@@ -138,6 +138,7 @@ Returns the full ingress host.
 {{- if .Values.ingress.host }}
     {{- .Values.ingress.host -}}
 {{- else -}}
-{{- printf "%s-%s.%s" .Release.Name .Chart.Name .Values.global.ingress.domain | indent 1 }}
+{{- $ingressFullname := include "nginx.fullname" . -}}
+{{- printf "%s.%s" $ingressFullname .Values.global.ingress.domain | indent 1 }}
 {{- end -}}
 {{- end -}}

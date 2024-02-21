@@ -119,6 +119,7 @@ ingress:
   enabled: false
   path: /
   host: 'localhost'
+  domain: 'example.com'
   tls: 
     enabled: true
     secretName: ''
