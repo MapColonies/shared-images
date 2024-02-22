@@ -135,10 +135,12 @@ Returns the port for NGINX Prometheus Exporter
 Returns the full ingress host.
 */}}
 {{- define "ingress.host" -}}
+{{- $ingressFullname := include "nginx.fullname" . -}}
 {{- if .Values.ingress.host }}
     {{- .Values.ingress.host -}}
+{{- else if .Values.ingress.domain -}}
+{{- printf "%s.%s" $ingressFullname .Values.ingress.domain | indent 1 }}
 {{- else -}}
-{{- $ingressFullname := include "nginx.fullname" . -}}
 {{- printf "%s.%s" $ingressFullname .Values.global.ingress.domain | indent 1 }}
 {{- end -}}
 {{- end -}}
