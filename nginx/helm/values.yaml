@@ -4,7 +4,7 @@ global:
   metrics: {}
   environment: ""
   ingress:
-    domain: ''     
+    domain: ''
 
 enabled: true
 environment: development
@@ -118,8 +118,8 @@ route:
 ingress:
   enabled: false
   path: /
-  host: 'localhost'
-  domain: 'example.com'
+  host: ''
+  domain: ''
   tls: 
     enabled: true
     secretName: ''
