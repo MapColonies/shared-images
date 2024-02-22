@@ -3,6 +3,8 @@ global:
   tracing: {}
   metrics: {}
   environment: ""
+  ingress:
+    domain: ''
 
 enabled: true
 environment: development
@@ -116,7 +118,8 @@ route:
 ingress:
   enabled: false
   path: /
-  host: 'localhost'
+  host: ''
+  domain: ''
   tls: 
     enabled: true
     secretName: ''

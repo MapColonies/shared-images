@@ -108,6 +108,7 @@ These are the main parameters you should adjust when you deploy this Helm Chart.
 `ingress.enabled` | Expose NGINX as an Ingress | `false`
 `ingress.path` | Path of ingress | `/`
 `ingress.host` | Host of ingress | `localhost`
+`ingress.domain` | Domain of ingress | `example.com`
 `ingress.tls.enabled` | Use ingress over HTTPS | `true`
 `ingress.tls.secretName` | Secret name of ingress that points to the relevant custom certificates | ` `
 `extraVolumes` | List of extra *volumes* that are added to the **Deployment** | `[]`
