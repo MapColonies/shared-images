@@ -12,4 +12,4 @@ This image extends `drakkan/sftpgo:v2.7.0` and makes the following OpenShift-com
 - Uses a custom `entrypoint.sh` script to handle initialization and runs the container explicitly under user `1001:1001`.
 
 ## Base Image
-- `drakkan/sftpgo:v2.7.0`
+- `drakkan/sftpgo`
