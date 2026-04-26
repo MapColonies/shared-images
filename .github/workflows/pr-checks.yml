@@ -1,0 +1,25 @@
+name: PR Checks
+
+on: pull_request
+
+jobs:
+  lint-and-format:
+    name: Code Quality (Prettier, Ruff & Hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Init Nodejs
+        uses: MapColonies/shared-workflows/actions/init-npm@init-npm-v1
+
+      - name: Install Tools
+        run: |
+          npm ci
+          python3 -m pip install ruff
+
+      - name: Check Formatting (Prettier & Ruff)
+        run: npm run format:check
+
+      - name: Lint Code (Ruff & Docker)
+        run: npm run lint

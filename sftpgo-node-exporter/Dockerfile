@@ -1,5 +1,5 @@
 # Use Ubuntu as the base image
-FROM --platform=linux/amd64 ubuntu:22.04
+FROM ubuntu:22.04
 
 # Set environment variables
 ENV NODE_EXPORTER_VERSION=1.8.2
@@ -8,7 +8,7 @@ ENV TEXT_FILES_ROOT="${NODE_EXPORTER_ROOT}/textfile_collector"
 ENV TEXT_FILES_SCRIPTS_ROOT="${NODE_EXPORTER_ROOT}/script"
 
 # Install necessary packages
-RUN apt update && apt install cron curl -y && \
+RUN apt-get update && apt-get install --no-install-recommends cron="3.*" curl="7.*" -y && \
     # Download Node Exporter
     curl -LO https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz && \
     # Extract and move the binary

@@ -20,7 +20,7 @@ We will implement a unified CI/CD architecture using GitHub Actions with a fully
 
 ## Implementation Decisions
 
-- **Flat Repository Structure:** All services and images will be moved to individual directories at the root level (e.g., `/my-internal-app/`, `/grafana-custom/`). 
+- **Flat Repository Structure:** All services and images will be moved to individual directories at the root level (e.g., `/my-internal-app/`, `/grafana-custom/`).
 - **Unified Release Pipeline (`release-please`):**
   - We will implement `google-github-actions/release-please-action` to handle versioning for the entire repository.
   - The configuration will map the release outputs to the Docker build/push steps uniformly for all root directories.

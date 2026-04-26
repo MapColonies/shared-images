@@ -8,14 +8,14 @@ The application runs using Gunicorn on port `8080`.
 
 The application is configured using the following environment variables:
 
-| Variable | Default | Description |
-|---|---|---|
-| `INDEX_NAME` | `webhook-data` | The Elasticsearch index where alerts are stored. |
-| `ES_HOST` | `http://localhost:9200` | The URL of the Elasticsearch cluster. |
-| `ES_USERNAME` | *(optional)* | Username for Elasticsearch authentication. |
-| `ES_PASSWORD` | *(optional)* | Password for Elasticsearch authentication. |
-| `ES_VERIFY_CERTS` | `false` | Whether to verify TLS/SSL certificates (`true`/`false`). |
-| `ES_CERT_PATH` | `/opt/bitnami/elasticsearch/config/certs/ca.cert` | Path to the CA certificate for TLS verification. |
+| Variable          | Default                                           | Description                                              |
+| ----------------- | ------------------------------------------------- | -------------------------------------------------------- |
+| `INDEX_NAME`      | `webhook-data`                                    | The Elasticsearch index where alerts are stored.         |
+| `ES_HOST`         | `http://localhost:9200`                           | The URL of the Elasticsearch cluster.                    |
+| `ES_USERNAME`     | _(optional)_                                      | Username for Elasticsearch authentication.               |
+| `ES_PASSWORD`     | _(optional)_                                      | Password for Elasticsearch authentication.               |
+| `ES_VERIFY_CERTS` | `false`                                           | Whether to verify TLS/SSL certificates (`true`/`false`). |
+| `ES_CERT_PATH`    | `/opt/bitnami/elasticsearch/config/certs/ca.cert` | Path to the CA certificate for TLS verification.         |
 
 ## Usage
 
