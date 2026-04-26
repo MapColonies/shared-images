@@ -12,4 +12,4 @@ This image extends `dpage/pgadmin4` with the following adjustments:
 - Sets `PGADMIN_DISABLE_POSTFIX=1` to disable the Postfix mail server, avoiding unnecessary privilege escalation and background process failures.
 
 ## Base Image
-- `dpage/pgadmin4:9.12`
+- `dpage/pgadmin4`

@@ -13,4 +13,4 @@ This image extends `hoppscotch/hoppscotch` and modifies the directory permission
 This ensures that the container can read and write to its necessary directories regardless of the random UID assigned by OpenShift.
 
 ## Base Image
-- `hoppscotch/hoppscotch:2026.2.0`
+- `hoppscotch/hoppscotch`
