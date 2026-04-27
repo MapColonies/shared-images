@@ -1,0 +1,8 @@
+{
+  "elastic-alertmanager-connector": "infra",
+  "hoppscotch": "infra",
+  "pgadmin": "infra",
+  "scaler": "infra",
+  "sftpgo": "infra",
+  "sftpgo-node-exporter": "infra"
+}

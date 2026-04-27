@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "elastic-alertmanager-connector": {
+      "release-type": "simple",
+      "prerelease": false
+    },
+    "hoppscotch": {
+      "release-type": "simple"
+    },
+    "pgadmin": {
+      "release-type": "simple"
+    },
+    "scaler": {
+      "release-type": "simple"
+    },
+    "sftpgo": {
+      "release-type": "simple"
+    },
+    "sftpgo-node-exporter": {
+      "release-type": "simple"
+    }
+  }
+}
