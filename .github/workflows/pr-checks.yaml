@@ -31,3 +31,26 @@ jobs:
 
       - name: Lint Code (Ruff & Docker)
         run: npm run lint
+
+  validate-ownership:
+    name: Validate Ownership
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Validate Ownership
+        run: |
+          MISSING=0
+          # List all directories at the root, excluding hidden and node_modules
+          for dir in $(find . -maxdepth 1 -type d -not -path '.' -not -path './node_modules' -not -path './.*' | sed 's|./||'); do
+            # Check if directory exists in ownership.json keys
+            if ! jq -e ".\"$dir\"" ownership.json > /dev/null; then
+              echo "Error: Component '$dir' is missing from ownership.json"
+              MISSING=1
+            fi
+          done
+          if [[ $MISSING -eq 1 ]]; then
+            exit 1
+          fi
+          echo "All components found in ownership.json"
