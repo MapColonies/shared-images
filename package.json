@@ -7,7 +7,7 @@
     "lint": "npm run lint:python && npm run lint:docker",
     "lint:python": "python3 -m ruff check .",
     "lint:python:fix": "python3 -m ruff check --fix .",
-    "lint:docker": "chmod +x node_modules/hadolint/.cache/hadolint/hadolint* 2>/dev/null || true; find . -type f -name 'Dockerfile*' -print0 | xargs -0 -I {} sh -c 'echo \"Linting {}\" && npx hadolint {}'",
+    "lint:docker": "find . -type f -name '*Dockerfile*' -print0 | xargs -0 -I {} sh -c 'echo \"Linting {}\" && docker run --rm -i hadolint/hadolint < {}'",
     "format": "prettier --write . && npm run format:python",
     "format:check": "prettier --check . && npm run format:python:check",
     "format:python": "python3 -m ruff format .",
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/MapColonies/shared-images#readme",
   "devDependencies": {
     "@map-colonies/prettier-config": "^1.0.0",
-    "hadolint": "^0.4.2",
     "prettier": "^3.8.3"
   }
 }
