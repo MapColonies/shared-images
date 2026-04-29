@@ -147,6 +147,3 @@ vite.config.ts.timestamp-*
 Jenkinsfile
 .travis.yml
 .circleci/
-
-# Python cache
-.ruff_cache/
