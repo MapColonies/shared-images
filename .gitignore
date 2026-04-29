@@ -141,9 +141,3 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# Legacy CI/CD configuration files
-.gitlab-ci.yml
-Jenkinsfile
-.travis.yml
-.circleci/
