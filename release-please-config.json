@@ -1,24 +1,29 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
-    "elastic-alertmanager-connector": {
+    "images/elastic-alertmanager-connector": {
       "release-type": "simple",
-      "prerelease": false
+      "package-name": "elastic-alertmanager-connector"
     },
-    "hoppscotch": {
-      "release-type": "simple"
+    "images/hoppscotch": {
+      "release-type": "simple",
+      "package-name": "hoppscotch"
     },
-    "pgadmin": {
-      "release-type": "simple"
+    "images/pgadmin": {
+      "release-type": "simple",
+      "package-name": "pgadmin"
     },
-    "scaler": {
-      "release-type": "simple"
+    "images/scaler": {
+      "release-type": "simple",
+      "package-name": "scaler"
     },
-    "sftpgo": {
-      "release-type": "simple"
+    "images/sftpgo": {
+      "release-type": "simple",
+      "package-name": "sftpgo"
     },
-    "sftpgo-node-exporter": {
-      "release-type": "simple"
+    "images/sftpgo-node-exporter": {
+      "release-type": "simple",
+      "package-name": "sftpgo-node-exporter"
     }
   }
 }

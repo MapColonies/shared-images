@@ -1,17 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 
-// Read all directories at the root of the repository
-const getRootDirectories = () => {
-  const rootPath = path.resolve(__dirname);
-  const items = fs.readdirSync(rootPath, { withFileTypes: true });
+// Read all directories under the 'images' folder
+const getImagesDirectories = () => {
+  const imagesPath = path.resolve(__dirname, 'images');
 
-  const ignoredDirs = ['.git', '.github', '.husky', 'node_modules'];
+  if (!fs.existsSync(imagesPath)) return [];
 
-  return items.filter((item) => item.isDirectory() && !item.name.startsWith('.') && !ignoredDirs.includes(item.name)).map((dir) => dir.name);
+  const items = fs.readdirSync(imagesPath, { withFileTypes: true });
+
+  return items.filter((item) => item.isDirectory() && !item.name.startsWith('.')).map((dir) => dir.name);
 };
 
-const validScopes = ['global', ...getRootDirectories()];
+const validScopes = ['global', ...getImagesDirectories()];
 
 module.exports = {
   extends: ['@commitlint/config-conventional'],
