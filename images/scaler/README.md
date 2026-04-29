@@ -1,4 +1,5 @@
 # Scaler (Container Image)
+
 Containerized scaler that sets Deployments/StatefulSets to 0 on “down” and restores on “up”.
 It records/restores replicas via the `previous-size` annotation and skips resources with `scaling.skip: "true"`.
 Uses the Kubernetes Python client in-cluster or with your local kubeconfig.
@@ -38,7 +39,7 @@ metadata:
   name: scaler-down
   namespace: projectName
 spec:
-  schedule: "30 19 * * 4" # Thu 19:30
+  schedule: '30 19 * * 4' # Thu 19:30
   jobTemplate:
     spec:
       template:

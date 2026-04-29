@@ -1,0 +1,32 @@
+{
+  "name": "shared-images",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npm run lint:python && npm run lint:docker",
+    "lint:python": "python3 -m ruff check .",
+    "lint:python:fix": "python3 -m ruff check --fix .",
+    "lint:docker": "./scripts/lint-docker.sh",
+    "format": "prettier --write . && npm run format:python",
+    "format:check": "prettier --check . && npm run format:python:check",
+    "format:python": "python3 -m ruff format .",
+    "format:python:check": "python3 -m ruff format --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MapColonies/shared-images.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MapColonies/shared-images/issues"
+  },
+  "homepage": "https://github.com/MapColonies/shared-images#readme",
+  "devDependencies": {
+    "@map-colonies/prettier-config": "^1.0.0",
+    "prettier": "^3.8.3"
+  }
+}

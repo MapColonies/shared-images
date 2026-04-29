@@ -37,4 +37,3 @@ The container starts two processes:
   Simple execution log written by the script
 
 ---
-

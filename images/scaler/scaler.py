@@ -28,7 +28,7 @@ class OpenShiftScaler:
     def _setup_logging(self) -> logging.Logger:
         """Setup logging configuration."""
         log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        
+
         logging.basicConfig(
             level=logging.INFO,
             format=log_format,
@@ -37,9 +37,7 @@ class OpenShiftScaler:
         logger = logging.getLogger(__name__)
         if not logger.handlers:
             handler = logging.StreamHandler(sys.stdout)
-            handler.setFormatter(
-                logging.Formatter(log_format)
-            )
+            handler.setFormatter(logging.Formatter(log_format))
             logger.addHandler(handler)
             logger.setLevel(logging.INFO)
         return logger
@@ -56,7 +54,9 @@ class OpenShiftScaler:
             config.load_incluster_config()
             self.logger.info("Authenticated using in-cluster service account.")
         except Exception:
-            self.logger.info("In-cluster config unavailable. Trying local kubeconfig...")
+            self.logger.info(
+                "In-cluster config unavailable. Trying local kubeconfig..."
+            )
             try:
                 config.load_kube_config()
                 self.logger.info("Authenticated using local kubeconfig.")
@@ -224,7 +224,9 @@ class OpenShiftScaler:
             return int(val)
         return None
 
-    def _patch_annotations(self, resource_name: str, annotations: Dict[str, Optional[str]]) -> bool:
+    def _patch_annotations(
+        self, resource_name: str, annotations: Dict[str, Optional[str]]
+    ) -> bool:
         """
         Patch annotations. Use 'key: None' to remove an annotation.
         """
@@ -256,10 +258,14 @@ class OpenShiftScaler:
         body = {"spec": {"replicas": replicas}}
         try:
             if kind == "deployment":
-                self.apps.patch_namespaced_deployment_scale(name, self.namespace, body=body)
+                self.apps.patch_namespaced_deployment_scale(
+                    name, self.namespace, body=body
+                )
             elif kind == "statefulset":
                 # patch scale subresource for statefulsets as well
-                self.apps.patch_namespaced_stateful_set_scale(name, self.namespace, body=body)
+                self.apps.patch_namespaced_stateful_set_scale(
+                    name, self.namespace, body=body
+                )
             else:
                 raise ValueError(f"Unsupported kind: {kind}")
             self.logger.info(f"Scaled {resource_name} to {replicas} replicas")
@@ -268,7 +274,9 @@ class OpenShiftScaler:
             if e.status == 403:
                 self.logger.error(f"Forbidden: No permission to scale {resource_name}.")
             else:
-                self.logger.error(f"Failed to scale {resource_name}: {e.status} {e.reason}")
+                self.logger.error(
+                    f"Failed to scale {resource_name}: {e.status} {e.reason}"
+                )
             return False
 
     # ------------------------- Slack -------------------------
@@ -279,12 +287,16 @@ class OpenShiftScaler:
             return
         payload = {"text": message}
         data = json.dumps(payload).encode("utf-8")
-        req = urlrequest.Request(webhook_url, data=data, headers={"Content-Type": "application/json"})
+        req = urlrequest.Request(
+            webhook_url, data=data, headers={"Content-Type": "application/json"}
+        )
         try:
             with urlrequest.urlopen(req, timeout=10) as resp:
                 self.logger.debug(f"Slack notification sent, status {resp.status}")
         except urlerror.HTTPError as e:
-            self.logger.error(f"Failed to send Slack notification: HTTP {e.code} - {e.read().decode(errors='ignore')}")
+            self.logger.error(
+                f"Failed to send Slack notification: HTTP {e.code} - {e.read().decode(errors='ignore')}"
+            )
         except Exception as e:
             self.logger.error(f"Failed to send Slack notification: {e}")
 
@@ -300,7 +312,9 @@ class OpenShiftScaler:
     ) -> str:
         target = release or "all releases"
         failed_text = (
-            f"Failed releases: {', '.join(sorted(failed_releases))}" if failed_releases else "Failed releases: none"
+            f"Failed releases: {', '.join(sorted(failed_releases))}"
+            if failed_releases
+            else "Failed releases: none"
         )
         return (
             f"Scaler {action} completed in {duration_sec:.1f}s for {target} in ns '{namespace}'.\n"
@@ -319,16 +333,22 @@ class OpenShiftScaler:
         if action == "down":
             current_replicas = self._get_current_replicas(resource_name)
             if current_replicas is None:
-                self.logger.warning(f"    Could not get replicas for {resource_name}, skipping")
+                self.logger.warning(
+                    f"    Could not get replicas for {resource_name}, skipping"
+                )
                 return None
             if current_replicas == 0:
                 self.logger.info(f"    Skipping {resource_name} - already at 0")
                 return None
 
             # Annotate first, then scale
-            if self._annotate_resource(resource_name, "previous-size", str(current_replicas)):
+            if self._annotate_resource(
+                resource_name, "previous-size", str(current_replicas)
+            ):
                 if self._scale_resource(resource_name, 0):
-                    self.logger.info(f"    Scaled {resource_name} {current_replicas} → 0")
+                    self.logger.info(
+                        f"    Scaled {resource_name} {current_replicas} → 0"
+                    )
                     return True
                 else:
                     self.logger.error(f"    Failed to scale {resource_name}")
@@ -342,19 +362,27 @@ class OpenShiftScaler:
         elif action == "up":
             previous_size = self._get_previous_size_annotation(resource_name)
             if previous_size is None:
-                self.logger.info(f"    No previous-size annotation on {resource_name}, skipping")
+                self.logger.info(
+                    f"    No previous-size annotation on {resource_name}, skipping"
+                )
                 return None
             if self._scale_resource(resource_name, int(previous_size)):
                 self._remove_annotation(resource_name, "previous-size")
-                self.logger.info(f"    Restored {resource_name} to {previous_size} replicas")
+                self.logger.info(
+                    f"    Restored {resource_name} to {previous_size} replicas"
+                )
                 return True
             else:
-                self.logger.error(f"    Failed to scale {resource_name} to {previous_size}")
+                self.logger.error(
+                    f"    Failed to scale {resource_name} to {previous_size}"
+                )
                 return False
         else:
             raise ValueError("action must be 'down' or 'up'")
 
-    def scale(self, action: str, target_release: Optional[str] = None) -> Dict[str, Any]:
+    def scale(
+        self, action: str, target_release: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Unified scaling handler for both 'down' and 'up'."""
         if action not in {"down", "up"}:
             raise ValueError("action must be 'down' or 'up'")
@@ -394,7 +422,9 @@ class OpenShiftScaler:
                 resources = self._get_resources_for_release(release, resource_type)
                 if not resources:
                     continue
-                self.logger.info(f"  Processing {resource_type}s for release '{release}':")
+                self.logger.info(
+                    f"  Processing {resource_type}s for release '{release}':"
+                )
 
                 for resource_name in resources:
                     result = self._process_resource(action, resource_name)
@@ -411,7 +441,13 @@ class OpenShiftScaler:
 
         duration = time.time() - start
         summary = self._format_summary(
-            action, self.namespace, target_release, successes, failures, duration, failed_releases
+            action,
+            self.namespace,
+            target_release,
+            successes,
+            failures,
+            duration,
+            failed_releases,
         )
         self.logger.info(summary)
         return {
@@ -469,7 +505,9 @@ class OpenShiftScaler:
                 "duration_sec": duration,
             }
 
-        self.logger.info(f"Processing all resources in ns '{self.namespace}': {len(resources)} items")
+        self.logger.info(
+            f"Processing all resources in ns '{self.namespace}': {len(resources)} items"
+        )
         for resource_name in resources:
             result = self._process_resource(action, resource_name)
             if result is True:
@@ -478,7 +516,9 @@ class OpenShiftScaler:
                 failures += 1
 
         duration = time.time() - start
-        summary = self._format_summary(action, self.namespace, None, successes, failures, duration, None)
+        summary = self._format_summary(
+            action, self.namespace, None, successes, failures, duration, None
+        )
         self.logger.info(summary)
         return {
             "summary": summary,
@@ -500,7 +540,9 @@ class OpenShiftScaler:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Kubernetes Resource Scaler (Python client)")
+    parser = argparse.ArgumentParser(
+        description="Kubernetes Resource Scaler (Python client)"
+    )
     parser.add_argument("action", choices=["up", "down"], help="Action to perform")
     # Allow multiple --namespace flags; also accept comma-separated values per flag
     parser.add_argument(
@@ -510,10 +552,22 @@ def main():
         help="Target namespace. Repeat flag for multiple or pass comma-separated list. Default: monitoring",
     )
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
-    parser.add_argument("--dry-run", action="store_true", help="Discovery only; no changes applied")
-    parser.add_argument("--release", help="Only operate on a specific release (e.g., infra-monitoring)")
-    parser.add_argument("--all", action="store_true", help="Process all resources (ignores release labels).")
-    parser.add_argument("--slack-webhook", dest="slack_webhook", help="Slack Incoming Webhook URL (overrides env SLACK_WEBHOOK_URL)")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Discovery only; no changes applied"
+    )
+    parser.add_argument(
+        "--release", help="Only operate on a specific release (e.g., infra-monitoring)"
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Process all resources (ignores release labels).",
+    )
+    parser.add_argument(
+        "--slack-webhook",
+        dest="slack_webhook",
+        help="Slack Incoming Webhook URL (overrides env SLACK_WEBHOOK_URL)",
+    )
     args = parser.parse_args()
 
     if args.debug:
@@ -554,15 +608,21 @@ def main():
             try:
                 scaler.ensure_login()
             except Exception:
-                logger.error(f"Skipping namespace '{ns}' due to authentication/authorization failure")
+                logger.error(
+                    f"Skipping namespace '{ns}' due to authentication/authorization failure"
+                )
                 continue
 
             if args.dry_run:
                 # Discovery-only: print counts and continue
                 info = scaler.discover_releases()
                 total_labels = len(info["all_releases"])  # may include duplicates
-                unlabeled_deployments = info["deployments_total"] - info["deployments_labeled"]
-                unlabeled_statefulsets = info["statefulsets_total"] - info["statefulsets_labeled"]
+                unlabeled_deployments = (
+                    info["deployments_total"] - info["deployments_labeled"]
+                )
+                unlabeled_statefulsets = (
+                    info["statefulsets_total"] - info["statefulsets_labeled"]
+                )
                 logger.info(
                     "DRY RUN: ns='%s' releases: total-labels=%d | deployments total=%d labeled=%d unlabeled=%d | statefulsets total=%d labeled=%d unlabeled=%d",
                     ns,
@@ -585,13 +645,19 @@ def main():
                         else:
                             result = scaler.scale_up(target_release=args.release)
                     # Accumulate metrics for final notification
-                    all_summaries.append(result["summary"])  # keep per-namespace summary for logs
+                    all_summaries.append(
+                        result["summary"]
+                    )  # keep per-namespace summary for logs
                     total_successes += int(result.get("successes", 0))
                     total_failures += int(result.get("failures", 0))
-                    aggregated_failed_releases.update(result.get("failed_releases", set()))
+                    aggregated_failed_releases.update(
+                        result.get("failed_releases", set())
+                    )
                     namespaces_processed.append(ns)
                 except Exception as e:
-                    logger.error(f"Namespace '{ns}' scaling operation failed: {e}", exc_info=True)
+                    logger.error(
+                        f"Namespace '{ns}' scaling operation failed: {e}", exc_info=True
+                    )
                     # continue to next namespace
                     continue
 
@@ -601,7 +667,9 @@ def main():
                 total_duration = time.time() - start_time
                 ns_text = ", ".join([f"'{n}'" for n in namespaces_processed])
                 failed_text = (
-                    f"Failed releases: {', '.join(sorted(aggregated_failed_releases))}" if aggregated_failed_releases else "Failed releases: none"
+                    f"Failed releases: {', '.join(sorted(aggregated_failed_releases))}"
+                    if aggregated_failed_releases
+                    else "Failed releases: none"
                 )
                 final_summary = (
                     f"Scaler {args.action} completed in {total_duration:.1f}s for all releases in {ns_text}.\n"
@@ -610,7 +678,11 @@ def main():
                 logger.info(final_summary)
                 if slack_url:
                     # Use a temporary scaler to reuse Slack notification helper
-                    temp_scaler = OpenShiftScaler(namespace=namespaces_processed[0] if namespaces_processed else "monitoring")
+                    temp_scaler = OpenShiftScaler(
+                        namespace=namespaces_processed[0]
+                        if namespaces_processed
+                        else "monitoring"
+                    )
                     temp_scaler._notify_slack(slack_url, final_summary)
         except Exception as e:
             logger.error(f"Failed to send final Slack summary: {e}")
