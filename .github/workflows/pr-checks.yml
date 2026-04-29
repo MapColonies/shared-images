@@ -23,8 +23,9 @@ jobs:
         working-directory: .
 
       - name: Install Ruff
-        run: |
-          python3 -m pip install ruff
+        env:
+          RUFF_VERSION: 0.15.12
+        run: python3 -m pip install ruff==${{ env.RUFF_VERSION }}
 
       - name: Check Formatting (Prettier & Ruff)
         run: npm run format:check
