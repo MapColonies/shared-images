@@ -11,7 +11,8 @@
     "format": "prettier --write . && npm run format:python",
     "format:check": "prettier --check . && npm run format:python:check",
     "format:python": "python3 -m ruff format .",
-    "format:python:check": "python3 -m ruff format --check ."
+    "format:python:check": "python3 -m ruff format --check .",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,11 @@
   },
   "homepage": "https://github.com/MapColonies/shared-images#readme",
   "devDependencies": {
+    "@commitlint/cli": "^20.5.2",
+    "@commitlint/config-conventional": "^20.5.0",
     "@map-colonies/prettier-config": "^1.0.0",
-    "prettier": "^3.8.3"
+    "husky": "^9.1.7",
+    "prettier": "^3.8.3",
+    "pretty-quick": "^4.2.2"
   }
 }
