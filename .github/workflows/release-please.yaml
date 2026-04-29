@@ -45,13 +45,17 @@ jobs:
           VERSION=$(jq -r '."${{ matrix.path }}"' .release-please-manifest.json)
           COMPONENT=$(basename "${{ matrix.path }}")
           TEAM=$(jq -r ".\"$COMPONENT\"" ownership.json)
+
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "TEAM=$TEAM" >> $GITHUB_ENV
-          echo "COMPONENT=$COMPONENT" >> $GITHUB_ENV
+          echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7
         with:
           context: ./${{ matrix.path }}
           push: true
-          tags: '${{ secrets.ACR_URL }}/${{ env.TEAM }}/${{ env.COMPONENT }}:${{ env.VERSION }},${{ secrets.ACR_URL }}/${{ env.TEAM }}/${{ env.COMPONENT }}:latest'
+          tags: |
+            ${{ env.IMAGE_BASE }}:${{ env.VERSION }}
+            ${{ env.IMAGE_BASE }}:latest
+          cache-from: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }}
+          cache-to: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }},mode=max
