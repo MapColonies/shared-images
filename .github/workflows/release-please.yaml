@@ -46,8 +46,8 @@ jobs:
           COMPONENT=$(basename "${{ matrix.path }}")
           TEAM=$(jq -r ".\"$COMPONENT\"" ownership.json)
 
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> "$GITHUB_ENV"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7

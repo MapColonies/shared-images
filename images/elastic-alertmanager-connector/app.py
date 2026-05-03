@@ -1,7 +1,8 @@
 import os
-from flask import Flask, request, jsonify
-from elasticsearch import Elasticsearch
 from datetime import datetime
+
+from elasticsearch import Elasticsearch
+from flask import Flask, jsonify, request
 
 PORT = 8080
 INDEX_NAME = os.getenv("INDEX_NAME", "webhook-data")
@@ -53,4 +54,5 @@ def webhook():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=PORT)
+    debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug_mode, host="0.0.0.0", port=PORT)

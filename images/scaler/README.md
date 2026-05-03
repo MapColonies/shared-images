@@ -69,7 +69,7 @@ RBAC note: the service account must be able to get/list/patch Deployments/Statef
 
 Entry: `python3 /app/scaler.py`
 
-```
+```shell
 python3 scaler.py {up,down} \
   --namespace <ns> [--namespace <ns> ...] \
   [--release <name>] [--all] [--dry-run] [--debug] \

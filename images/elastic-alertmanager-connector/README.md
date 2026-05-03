@@ -9,7 +9,7 @@ The application runs using Gunicorn on port `8080`.
 The application is configured using the following environment variables:
 
 | Variable          | Default                                           | Description                                              |
-| ----------------- | ------------------------------------------------- | -------------------------------------------------------- |
+|-------------------|---------------------------------------------------|----------------------------------------------------------|
 | `INDEX_NAME`      | `webhook-data`                                    | The Elasticsearch index where alerts are stored.         |
 | `ES_HOST`         | `http://localhost:9200`                           | The URL of the Elasticsearch cluster.                    |
 | `ES_USERNAME`     | _(optional)_                                      | Username for Elasticsearch authentication.               |

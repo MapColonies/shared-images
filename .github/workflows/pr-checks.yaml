@@ -2,13 +2,17 @@ name: PR Checks
 
 on: pull_request
 
+permissions: read-all
+
 jobs:
   lint-and-format:
-    name: Code Quality (Prettier, Ruff & Hadolint)
+    name: Code Quality (Prettier, Ruff & MegaLinter)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -22,16 +26,23 @@ jobs:
         run: npm ci
         working-directory: .
 
-      - name: Install Ruff
-        env:
-          RUFF_VERSION: 0.15.12
-        run: python3 -m pip install ruff==${{ env.RUFF_VERSION }}
+      - name: Cache MegaLinter Docker image
+        id: cache-megalinter
+        uses: actions/cache@v5
+        with:
+          path: /tmp/megalinter-image.tar
+          key: megalinter-image-v9
 
-      - name: Check Formatting (Prettier & Ruff)
-        run: npm run format:check
+      - name: Load MegaLinter Image
+        if: steps.cache-megalinter.outputs.cache-hit == 'true'
+        run: docker load -i /tmp/megalinter-image.tar || true
 
-      - name: Lint Code (Ruff & Docker)
+      - name: Lint Code (MegaLinter)
         run: npm run lint
+
+      - name: Save MegaLinter Image
+        if: steps.cache-megalinter.outputs.cache-hit != 'true'
+        run: docker save ghcr.io/oxsecurity/megalinter:v9 -o /tmp/megalinter-image.tar
 
   validate-ownership:
     name: Validate Ownership

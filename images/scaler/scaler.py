@@ -6,13 +6,14 @@ using the official Kubernetes Python client (no shell commands).
 """
 
 import argparse
-import os
 import json
 import logging
+import os
 import sys
 import time
-from urllib import request as urlrequest, error as urlerror
 from typing import Any, Dict, List, Optional, Set
+from urllib import error as urlerror
+from urllib import request as urlrequest
 
 from kubernetes import client, config
 from kubernetes.client import ApiException
@@ -131,7 +132,7 @@ class OpenShiftScaler:
             "deployments_labeled": 0,
             "statefulsets_total": 0,
             "statefulsets_labeled": 0,
-            "all_releases": [],  # type: List[str]
+            "all_releases": [],
         }
         all_labels: List[str] = []
 
@@ -679,9 +680,11 @@ def main():
                 if slack_url:
                     # Use a temporary scaler to reuse Slack notification helper
                     temp_scaler = OpenShiftScaler(
-                        namespace=namespaces_processed[0]
-                        if namespaces_processed
-                        else "monitoring"
+                        namespace=(
+                            namespaces_processed[0]
+                            if namespaces_processed
+                            else "monitoring"
+                        )
                     )
                     temp_scaler._notify_slack(slack_url, final_summary)
         except Exception as e:
