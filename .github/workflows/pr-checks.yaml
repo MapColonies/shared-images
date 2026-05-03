@@ -5,8 +5,8 @@ on: pull_request
 permissions: read-all
 
 jobs:
-  lint-and-format:
-    name: Code Quality (Prettier, Ruff & MegaLinter)
+  mega-lint:
+    name: Code Quality (MegaLinter)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -41,7 +41,7 @@ jobs:
         run: npm run lint
 
       - name: Save MegaLinter Image
-        if: steps.cache-megalinter.outputs.cache-hit != 'true'
+        if: ${{ always() && steps.cache-megalinter.outputs.cache-hit != 'true' }}
         run: docker save ghcr.io/oxsecurity/megalinter:v9 -o /tmp/megalinter-image.tar
 
   validate-ownership:
