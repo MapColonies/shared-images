@@ -26,23 +26,13 @@ jobs:
         run: npm ci
         working-directory: .
 
-      - name: Cache MegaLinter Docker image
-        id: cache-megalinter
-        uses: actions/cache@v5
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.5.0
         with:
-          path: /tmp/megalinter-image.tar
-          key: megalinter-image-v9
-
-      - name: Load MegaLinter Image
-        if: steps.cache-megalinter.outputs.cache-hit == 'true'
-        run: docker load -i /tmp/megalinter-image.tar || true
+          key: docker-${{ runner.os }}-megalinter-v9
 
       - name: Lint Code (MegaLinter)
         run: npm run lint
-
-      - name: Save MegaLinter Image
-        if: ${{ always() && steps.cache-megalinter.outputs.cache-hit != 'true' }}
-        run: docker save ghcr.io/oxsecurity/megalinter:v9 -o /tmp/megalinter-image.tar
 
   validate-ownership:
     name: Validate Ownership
