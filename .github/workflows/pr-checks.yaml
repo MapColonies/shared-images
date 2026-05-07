@@ -1,0 +1,65 @@
+name: PR Checks
+
+on: pull_request
+
+jobs:
+  lint-and-format:
+    name: Code Quality (Prettier, Ruff & Hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install TS Project dependencies
+        shell: bash
+        run: npm ci
+        working-directory: .
+
+      - name: Install Ruff
+        env:
+          RUFF_VERSION: 0.15.12
+        run: python3 -m pip install ruff==${{ env.RUFF_VERSION }}
+
+      - name: Check Formatting (Prettier & Ruff)
+        run: npm run format:check
+
+      - name: Lint Code (Ruff & Docker)
+        run: npm run lint
+
+  validate-ownership:
+    name: Validate Ownership
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Validate Ownership
+        run: |
+          MISSING=0
+
+          # Ensure the images directory exists before running find
+          if [ ! -d "images" ]; then
+            echo "Error: 'images' directory not found."
+            exit 1
+          fi
+
+          # List all directories inside 'images', excluding hidden directories
+          for dir in $(find images -mindepth 1 -maxdepth 1 -type d -not -name '.*' | sed 's|images/||'); do
+            # Check if directory exists in ownership.json keys
+            if ! jq -e ".\"$dir\"" ownership.json > /dev/null; then
+              echo "Error: Component '$dir' is missing from ownership.json"
+              MISSING=1
+            fi
+          done
+
+          if [[ $MISSING -eq 1 ]]; then
+            exit 1
+          fi
+          echo "All components found in ownership.json"
