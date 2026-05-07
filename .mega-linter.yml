@@ -14,7 +14,6 @@ DISABLE_LINTERS:
   - REPOSITORY_KICS
   - REPOSITORY_DEVSKIM
   - SPELL_CSPELL
-  - YAML_YAMLLINT
 
 # Uncomment if you want MegaLinter to detect errors but not block CI to pass
 # DISABLE_ERRORS: true
