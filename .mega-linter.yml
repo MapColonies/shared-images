@@ -1,0 +1,38 @@
+# Configuration file for MegaLinter
+#
+# See all available variables at https://megalinter.io/latest/config-file/ and in
+# linters documentation
+---
+# all, none, or list of linter keys
+APPLY_FIXES: none
+
+DISABLE_LINTERS:
+  - PYTHON_PYRIGHT
+  - JSON_V8R
+  - REPOSITORY_DUSTILOCK
+  - REPOSITORY_KINGFISHER
+  - REPOSITORY_KICS
+  - REPOSITORY_DEVSKIM
+  - SPELL_CSPELL
+
+# Uncomment if you want MegaLinter to detect errors but not block CI to pass
+# DISABLE_ERRORS: true
+
+SHOW_ELAPSED_TIME: true
+SHOW_SKIPPED_LINTERS: false
+PRINT_ALPACA: false
+FLAVOR_SUGGESTIONS: false
+VALIDATE_ALL_CODEBASE: false
+
+PYTHON_FLAKE8_ARGUMENTS:
+  - --max-line-length=160
+
+PYTHON_PYLINT_ARGUMENTS:
+  - --disable=unrecognized-option,import-error
+
+PYTHON_BANDIT_ARGUMENTS:
+  - -s ,B104,B310
+
+YAML_YAMLLINT_CONFIG_FILE: .yamllint.yaml
+JAVASCRIPT_DEFAULT_STYLE: prettier
+FILTER_REGEX_EXCLUDE: (package-lock\.json)$

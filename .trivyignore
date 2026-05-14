@@ -1,0 +1,2 @@
+# We rely on external orchestrator probes, so Docker HEALTHCHECK is unnecessary
+DS-0026

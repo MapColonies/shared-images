@@ -5,3 +5,5 @@ RUN chgrp -R 0 /site && \
 
 RUN chgrp -R 0 /dist/backend && \
     chmod -R g+rwX /dist/backend
+
+USER 1001

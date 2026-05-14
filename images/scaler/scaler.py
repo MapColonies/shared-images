@@ -6,24 +6,25 @@ using the official Kubernetes Python client (no shell commands).
 """
 
 import argparse
-import os
 import json
 import logging
+import os
 import sys
 import time
-from urllib import request as urlrequest, error as urlerror
 from typing import Any, Dict, List, Optional, Set
+from urllib import error as urlerror
+from urllib import request as urlrequest
 
-from kubernetes import client, config
-from kubernetes.client import ApiException
+from kubernetes import client, config  # type: ignore[import-untyped]
+from kubernetes.client import ApiException  # type: ignore[import-untyped]
 
 
 class OpenShiftScaler:
-    def __init__(self, namespace: str = "monitoring"):
+    def __init__(self, namespace: str = "monitoring") -> None:
         self.namespace = namespace
         self.logger = self._setup_logging()
-        self.apps = None  # type: Optional[client.AppsV1Api]
-        self.core = None  # type: Optional[client.CoreV1Api]
+        self.apps: Any = None
+        self.core: Any = None
 
     def _setup_logging(self) -> logging.Logger:
         """Setup logging configuration."""
@@ -126,12 +127,12 @@ class OpenShiftScaler:
         """Discover all release labels (including duplicates) and provide counts.
         Returns a dictionary with totals and lists for diagnostics/dry-run.
         """
-        totals = {
+        totals: Dict[str, Any] = {
             "deployments_total": 0,
             "deployments_labeled": 0,
             "statefulsets_total": 0,
             "statefulsets_labeled": 0,
-            "all_releases": [],  # type: List[str]
+            "all_releases": [],
         }
         all_labels: List[str] = []
 
@@ -530,16 +531,16 @@ class OpenShiftScaler:
 
     # ------------------------- Actions -------------------------
 
-    def scale_down(self, target_release: Optional[str] = None):
+    def scale_down(self, target_release: Optional[str] = None) -> Dict[str, Any]:
         """Wrapper for scaling down using the unified handler."""
         return self.scale("down", target_release=target_release)
 
-    def scale_up(self, target_release: Optional[str] = None):
+    def scale_up(self, target_release: Optional[str] = None) -> Dict[str, Any]:
         """Wrapper for scaling up using the unified handler."""
         return self.scale("up", target_release=target_release)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Kubernetes Resource Scaler (Python client)"
     )
@@ -679,9 +680,11 @@ def main():
                 if slack_url:
                     # Use a temporary scaler to reuse Slack notification helper
                     temp_scaler = OpenShiftScaler(
-                        namespace=namespaces_processed[0]
-                        if namespaces_processed
-                        else "monitoring"
+                        namespace=(
+                            namespaces_processed[0]
+                            if namespaces_processed
+                            else "monitoring"
+                        )
                     )
                     temp_scaler._notify_slack(slack_url, final_summary)
         except Exception as e:

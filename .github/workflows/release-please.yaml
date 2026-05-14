@@ -46,8 +46,8 @@ jobs:
           COMPONENT=$(basename "${{ matrix.path }}")
           TEAM=$(jq -r ".\"$COMPONENT\"" ownership.json)
 
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
