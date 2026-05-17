@@ -40,7 +40,3 @@ FILTER_REGEX_EXCLUDE: (package-lock\.json)$
 
 ACTION_ZIZMOR_UNSECURED_ENV_VARIABLES:
   - GITHUB_TOKEN
-
-PRE_COMMANDS:
-  - command: npm install @map-colonies/prettier-config
-    cwd: 'root'
