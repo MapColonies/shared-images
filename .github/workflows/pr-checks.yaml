@@ -2,11 +2,15 @@ name: PR Checks
 
 on: pull_request
 
-permissions: read-all
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
-  mega-lint:
-    name: Code Quality (MegaLinter)
+  megalinter:
+    name: MegaLinter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -14,28 +18,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'npm'
-          cache-dependency-path: ./package-lock.json
-
-      - name: Install TS Project dependencies
-        shell: bash
-        run: npm ci
-        working-directory: .
-
-      - name: Cache Docker images
-        uses: ScribeMD/docker-cache@0.5.0
-        with:
-          key: docker-${{ runner.os }}-megalinter-v9
-
-      - name: Lint Code (MegaLinter)
+      - name: MegaLinter
         uses: oxsecurity/megalinter@v9
         env:
-          # This token is required for MegaLinter to fetch the PR diff via the GitHub API
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          VALIDATE_ALL_CODEBASE: >-
+            ${{
+              github.event_name == 'push' &&
+              github.ref == 'refs/heads/main'
+            }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Upload MegaLinter artifacts
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: MegaLinter reports
+          include-hidden-files: 'true'
+          path: |
+            megalinter-reports
+            mega-linter.log
 
   validate-ownership:
     name: Validate Ownership
