@@ -35,7 +35,7 @@ jobs:
         uses: oxsecurity/megalinter@v9
         env:
           # This token is required for MegaLinter to fetch the PR diff via the GitHub API
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
   validate-ownership:
     name: Validate Ownership
