@@ -17,7 +17,7 @@ COPY plugins.yaml .
 RUN mkdir -p /plugins && \
     yq e '.plugins[] | .name + " " + .version' plugins.yaml | while read -r plugin version; do \
       echo "Downloading $plugin version $version..."; \
-      curl -L -o "/tmp/${plugin}.zip" "https://grafana.com/api/plugins/${plugin}/versions/${version}/download"; \
+      curl -fL -o "/tmp/${plugin}.zip" "https://grafana.com/api/plugins/${plugin}/versions/${version}/download"; \
       unzip -q "/tmp/${plugin}.zip" -d "/plugins/${plugin}"; \
       rm "/tmp/${plugin}.zip"; \
     done

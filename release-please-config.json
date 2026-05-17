@@ -25,6 +25,10 @@
     "images/sftpgo-node-exporter": {
       "release-type": "simple",
       "package-name": "sftpgo-node-exporter"
+    },
+    "images/grafana": {
+      "release-type": "simple",
+      "package-name": "grafana"
     }
   }
 }
