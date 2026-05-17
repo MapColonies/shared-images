@@ -32,7 +32,10 @@ jobs:
           key: docker-${{ runner.os }}-megalinter-v9
 
       - name: Lint Code (MegaLinter)
-        run: npm run lint
+        uses: oxsecurity/megalinter@v9
+        env:
+          # This token is required for MegaLinter to fetch the PR diff via the GitHub API
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   validate-ownership:
     name: Validate Ownership
