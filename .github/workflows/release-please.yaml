@@ -51,7 +51,7 @@ jobs:
           MATRIX_PATH: ${{ matrix.path }}
         run: |
           VERSION=$(jq -r ".\"$MATRIX_PATH\"" .release-please-manifest.json)
-          COMPONENT=$(basename ".\"$MATRIX_PATH\"")
+          COMPONENT=$(basename "$MATRIX_PATH")
           TEAM=$(jq -r ".\"$COMPONENT\"" ownership.json)
 
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
@@ -72,10 +72,14 @@ jobs:
           cache-to: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }},mode=max
   update-helm-chart:
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs: [release-please, build-and-push]
+    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     permissions:
       contents: write
       pull-requests: write
+    strategy:
+      matrix:
+        path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -88,7 +92,7 @@ jobs:
         with:
           persist-credentials: false
           repository: ${{ github.repository_owner }}/helm-charts-new
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           path: helm-charts
 
       - name: Set up Node.js
@@ -96,26 +100,24 @@ jobs:
         with:
           node-version: 24.x
           cache: 'npm'
-          cache-dependency-path: ./package-lock.json
+          cache-dependency-path: ./shared-images/package-lock.json
 
       - name: Install TS Project dependencies
         shell: bash
         run: npm ci
         working-directory: ./shared-images
 
-      - name: Extract Image Name and Tag from Release
+      - name: Extract Image Name and Tag from Manifest
         id: extract
+        working-directory: ./shared-images
         env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
+          MATRIX_PATH: ${{ matrix.path }}
         run: |
-          # Use regex to safely split the last hyphen, e.g. "my-app-v1.0" -> "my-app" and "v1.0"
-          if [[ $TAG_NAME =~ ^(.*)-([^-]+)$ ]]; then
-            echo "image_name=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
-            echo "new_tag=${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
-          else
-            echo "Failed to parse tag: $TAG_NAME. Expected format: <image-name>-<tag>"
-            exit 1
-          fi
+          VERSION=$(jq -r --arg path "$MATRIX_PATH" '.[$path]' .release-please-manifest.json)
+          COMPONENT=$(basename "$MATRIX_PATH")
+
+          echo "image_name=$COMPONENT" >> "$GITHUB_OUTPUT"
+          echo "new_tag=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Run Update Script
         env:
@@ -127,7 +129,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           path: helm-charts
           commit-message: 'deps(${{ steps.extract.outputs.image_name }}): update image version to ${{ steps.extract.outputs.new_tag }}'
           branch: 'update-image-${{ steps.extract.outputs.image_name }}-${{ steps.extract.outputs.new_tag }}'
