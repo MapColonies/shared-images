@@ -40,6 +40,13 @@ Docker builds and registry pushes are handled dynamically in `.github/workflows/
 
 ### 6. Automated Helm Chart Updates
 When a new version of an image is released, an automated GitHub Actions job (`update-helm-chart` in `release-please.yaml`) executes a custom script (`.github/scripts/update-chart.js`).
-- This script scans an external Helm charts repository.
-- It finds any Helm charts or chart dependencies matching the updated image name.
-- It automatically updates `values.yaml` tags (or `appVersion` in `Chart.yaml`) and creates a Pull Request in the Helm charts repository.
+This script scans an external Helm charts repository and performs surgical YAML updates based on the following logic cases:
+
+- **Standard Match**: If the image name matches a chart name, it updates the root `image.tag` in `values.yaml`.
+- **Dependency Match**: If the image is found as a dependency, it updates the nested `[imageName].image.tag` in `values.yaml`.
+- **AppVersion Fallback**: If `values.yaml` is missing the specific tag property, it updates `appVersion` in `Chart.yaml` instead.
+- **Shared Images**: If the same image is used across multiple different charts, all of them are updated simultaneously.
+- **Dual Match Priority**: If an image matches both a chart name AND is a dependency within that same chart, the dependency update is prioritized.
+- **Silent Skip**: If no match is found anywhere in the repository, the script exits gracefully without changes.
+
+The script then creates a single, consolidated Pull Request in the Helm charts repository with all the necessary changes.
