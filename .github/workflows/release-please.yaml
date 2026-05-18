@@ -62,3 +62,64 @@ jobs:
             ${{ env.IMAGE_BASE }}:latest
           cache-from: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }}
           cache-to: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }},mode=max
+  update-helm-chart:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+          path: shared-images
+
+      - name: Checkout Helm Charts Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          repository: ${{ github.repository_owner }}/helm-charts-new
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: helm-charts
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install TS Project dependencies
+        shell: bash
+        run: npm ci
+        working-directory: ./shared-images
+
+      - name: Extract Image Name and Tag from Release
+        id: extract
+        run: |
+          # Use regex to safely split the last hyphen, e.g. "my-app-v1.0" -> "my-app" and "v1.0"
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          if [[ $TAG_NAME =~ ^(.*)-([^-]+)$ ]]; then
+            echo "image_name=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "new_tag=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to parse tag: $TAG_NAME. Expected format: <image-name>-<tag>"
+            exit 1
+          fi
+
+      - name: Run Update Script
+        env:
+          IMAGE_NAME: ${{ steps.extract.outputs.image_name }}
+          NEW_TAG: ${{ steps.extract.outputs.new_tag }}
+        working-directory: ./shared-images
+        run: node .github/scripts/update-chart.js
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: helm-charts
+          commit-message: 'deps(${{ steps.extract.outputs.image_name }}): update image version to ${{ steps.extract.outputs.new_tag }}'
+          branch: 'update-image-${{ steps.extract.outputs.image_name }}-${{ steps.extract.outputs.new_tag }}'
+          title: 'deps(${{ steps.extract.outputs.image_name }}): update image version to ${{ steps.extract.outputs.new_tag }}'
+          body: |
+            This PR automatically updates the `${{ steps.extract.outputs.image_name }}` Helm chart image tag to `${{ steps.extract.outputs.new_tag }}`.
+
+            Triggered by a release published in the `shared-images` repository.
