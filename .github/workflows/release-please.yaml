@@ -110,8 +110,8 @@ jobs:
         run: |
           # Use regex to safely split the last hyphen, e.g. "my-app-v1.0" -> "my-app" and "v1.0"
           if [[ $TAG_NAME =~ ^(.*)-([^-]+)$ ]]; then
-            echo "image_name=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
-            echo "new_tag=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+            echo "image_name=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+            echo "new_tag=${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
           else
             echo "Failed to parse tag: $TAG_NAME. Expected format: <image-name>-<tag>"
             exit 1
