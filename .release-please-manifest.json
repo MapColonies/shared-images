@@ -3,7 +3,7 @@
   "images/hoppscotch": "1.0.0",
   "images/pgadmin": "1.0.0",
   "images/scaler": "1.0.9",
-  "images/sftpgo": "1.0.0",
+  "images/sftpgo": "1.1.0",
   "images/sftpgo-node-exporter": "1.0.0",
   "images/grafana": "1.0.0"
 }
