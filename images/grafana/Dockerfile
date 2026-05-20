@@ -1,36 +1,46 @@
-# We use an ARG to dynamically set the base version from CI
+# https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#build-a-grafana-docker-image-with-pre-installed-plugins
+# https://github.com/grafana/grafana/blob/main/packaging/docker/custom/Dockerfile
+
 ARG GRAFANA_VERSION=12.3.1
 
-# --- Stage 1: Downloader ---
-FROM alpine:3.19 AS downloader
-
-# Prevents silent pipeline failures
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-
-# Install tools needed to parse YAML and extract zips
-RUN apk add --no-cache curl yq unzip
-
-WORKDIR /downloads
-COPY plugins.yaml .
-
-# Parse the YAML file and download/extract each plugin
-RUN mkdir -p /plugins && \
-    yq e '.plugins[] | .name + " " + .version' plugins.yaml | while read -r plugin version; do \
-      echo "Downloading $plugin version $version..."; \
-      curl -fL -o "/tmp/${plugin}.zip" "https://grafana.com/api/plugins/${plugin}/versions/${version}/download"; \
-      unzip -q "/tmp/${plugin}.zip" -d "/plugins/${plugin}"; \
-      rm "/tmp/${plugin}.zip"; \
-    done
-
-# --- Stage 2: Final Image ---
 FROM grafana/grafana:${GRAFANA_VERSION}
+
+ARG GF_GID="0"
+
+ENV GF_PATHS_PLUGINS="/var/lib/grafana-plugins"
 
 USER root
 
-# Copy only the extracted plugins from the downloader stage
-COPY --from=downloader /plugins /opt/grafana/plugins
-
-# Ensure Grafana owns the plugins directory
-RUN chown -R 472:0 /opt/grafana/plugins
+# Create the plugins directory with all permissions since Grafana will need to write to it when installing plugins, and we want to avoid permission issues
+RUN mkdir -p "$GF_PATHS_PLUGINS" && \
+    chown -R grafana:${GF_GID} "$GF_PATHS_PLUGINS" && \
+    chmod -R 777 "$GF_PATHS_PLUGINS"
 
 USER grafana
+
+# Copy the plugins list into a temporary location in the container
+COPY plugins.txt /tmp/plugins.txt
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Loop through the file and install each plugin
+RUN set -e; \
+    while IFS= read -r line || [ -n "$line" ]; do \
+      # Strip leading/trailing whitespace
+      plugin=$(echo "$line" | xargs); \
+      # Skip empty lines or comments
+      case "$plugin" in \
+        ""|\#*) continue ;; \
+      esac; \
+      \
+      if echo "$plugin" | grep -q ';'; then \
+        # Handle custom plugin URLs (url;folder)
+        pluginUrl=$(echo "$plugin" | cut -d';' -f 1); \
+        pluginInstallFolder=$(echo "$plugin" | cut -d';' -f 2); \
+        grafana cli --pluginUrl "${pluginUrl}" --pluginsDir "${GF_PATHS_PLUGINS}" plugins install "${pluginInstallFolder}"; \
+      else \
+        # If the file contains "plugin version" (space separated), map it to "plugin@version"
+        formattedPlugin=$(echo "$plugin" | awk '{if ($2) print $1"@"$2; else print $1}'); \
+        grafana cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install "${formattedPlugin}"; \
+      fi; \
+    done < /tmp/plugins.txt

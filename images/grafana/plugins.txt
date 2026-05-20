@@ -1,0 +1,12 @@
+# Data Sources
+redis-datasource
+redis-app
+
+# Panels
+magnesium-wordcloud-panel
+
+# Core / App Plugins
+grafana-pyroscope-app
+grafana-exploretraces-app
+grafana-metricsdrilldown-app
+grafana-lokiexplore-app
