@@ -5,5 +5,5 @@
   "images/scaler": "1.0.9",
   "images/sftpgo": "1.0.0",
   "images/sftpgo-node-exporter": "1.0.0",
-  "images/grafana": "1.1.0"
+  "images/grafana": "1.1.1"
 }
