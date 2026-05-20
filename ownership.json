@@ -4,5 +4,6 @@
   "pgadmin": "infra",
   "scaler": "infra",
   "sftpgo": "infra",
-  "sftpgo-node-exporter": "infra"
+  "sftpgo-node-exporter": "infra",
+  "grafana": "infra"
 }

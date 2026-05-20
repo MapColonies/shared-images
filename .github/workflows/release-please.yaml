@@ -6,34 +6,40 @@ on:
       - master
 
 permissions:
-  contents: write
-  pull-requests: write
-  packages: write
+  contents: read
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
     steps:
       - name: Run release-please
         id: release
-        uses: googleapis/release-please-action@v5
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5
 
   build-and-push:
     needs: release-please
     if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
         with:
           registry: ${{ secrets.ACR_URL }}
           username: ${{ secrets.ACR_PUSH_USER }}
@@ -41,19 +47,21 @@ jobs:
 
       - name: Extract Version and Team
         id: extract_metadata
+        env:
+          MATRIX_PATH: ${{ matrix.path }}
         run: |
-          VERSION=$(jq -r '."${{ matrix.path }}"' .release-please-manifest.json)
-          COMPONENT=$(basename "${{ matrix.path }}")
+          VERSION=$(jq -r ".\"$MATRIX_PATH\"" .release-please-manifest.json)
+          COMPONENT=$(basename "$MATRIX_PATH")
           TEAM=$(jq -r ".\"$COMPONENT\"" ownership.json)
 
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "IMAGE_BASE=${{ secrets.ACR_URL }}/$TEAM/$COMPONENT" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7
         with:
           context: ./${{ matrix.path }}
           push: true
@@ -62,3 +70,71 @@ jobs:
             ${{ env.IMAGE_BASE }}:latest
           cache-from: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }}
           cache-to: type=registry,ref=${{ env.IMAGE_BASE }}:buildcache-${{ github.ref_name }},mode=max
+  update-helm-chart:
+    runs-on: ubuntu-latest
+    needs: [release-please, build-and-push]
+    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      matrix:
+        path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+          path: shared-images
+
+      - name: Checkout Helm Charts Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+          repository: ${{ github.repository_owner }}/helm-charts-new
+          token: ${{ secrets.GH_PAT }}
+          path: helm-charts
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+          cache-dependency-path: ./shared-images/package-lock.json
+
+      - name: Install TS Project dependencies
+        shell: bash
+        run: npm ci
+        working-directory: ./shared-images
+
+      - name: Extract Image Name and Tag from Manifest
+        id: extract
+        working-directory: ./shared-images
+        env:
+          MATRIX_PATH: ${{ matrix.path }}
+        run: |
+          VERSION=$(jq -r --arg path "$MATRIX_PATH" '.[$path]' .release-please-manifest.json)
+          COMPONENT=$(basename "$MATRIX_PATH")
+
+          echo "image_name=$COMPONENT" >> "$GITHUB_OUTPUT"
+          echo "new_tag=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Run Update Script
+        env:
+          IMAGE_NAME: ${{ steps.extract.outputs.image_name }}
+          NEW_TAG: ${{ steps.extract.outputs.new_tag }}
+        working-directory: ./shared-images
+        run: node .github/scripts/update-chart.js
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          token: ${{ secrets.GH_PAT }}
+          path: helm-charts
+          commit-message: 'deps(${{ steps.extract.outputs.image_name }}): update image version to ${{ steps.extract.outputs.new_tag }}'
+          branch: 'update-image-${{ steps.extract.outputs.image_name }}-${{ steps.extract.outputs.new_tag }}'
+          title: 'deps(${{ steps.extract.outputs.image_name }}): update image version to ${{ steps.extract.outputs.new_tag }}'
+          body: |
+            This PR automatically updates the `${{ steps.extract.outputs.image_name }}` Helm chart image tag to `${{ steps.extract.outputs.new_tag }}`.
+
+            Triggered by a release published in the `shared-images` repository.
