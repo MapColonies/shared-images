@@ -19,12 +19,12 @@ This image extends `grafana/grafana` with the following adjustments:
 
 To update or add new plugins, modify the `plugins.txt` file and rebuild the image. The file supports two formats:
 
-1.  **Standard Plugins:** One plugin name per line (optionally followed by a version).
+1. **Standard Plugins:** One plugin name per line (optionally followed by a version).
     ```text
     redis-datasource
     redis-app 2.1.0
     ```
-2.  **Custom URL Plugins:** Use the format `url;folder`.
+2. **Custom URL Plugins:** Use the format `url;folder`.
     ```text
     https://github.com/example/plugin/releases/download/v1.0.0/plugin.zip;plugin-folder-name
     ```
