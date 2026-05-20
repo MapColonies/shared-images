@@ -21,6 +21,8 @@ USER grafana
 # Copy the plugins list into a temporary location in the container
 COPY plugins.txt /tmp/plugins.txt
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Loop through the file and install each plugin
 RUN set -e; \
     while IFS= read -r line || [ -n "$line" ]; do \
