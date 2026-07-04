@@ -1,5 +1,5 @@
 {
-  "images/elastic-alertmanager-connector": "1.0.0",
+  "images/elastic-alertmanager-connector": "1.1.0",
   "images/hoppscotch": "1.0.0",
   "images/pgadmin": "1.0.0",
   "images/scaler": "1.0.9",
