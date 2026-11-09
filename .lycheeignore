@@ -1,0 +1,3 @@
+# images/grafana/plugins.txt uses "url;folder" for custom plugins; lychee reads the
+# whole entry (including ";folder") as one URL and gets a 404. Skip those entries.
+\.zip;[A-Za-z0-9._-]+$
