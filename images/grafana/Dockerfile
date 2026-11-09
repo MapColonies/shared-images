@@ -1,7 +1,7 @@
 # https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#build-a-grafana-docker-image-with-pre-installed-plugins
 # https://github.com/grafana/grafana/blob/main/packaging/docker/custom/Dockerfile
 
-ARG GRAFANA_VERSION=12.3.1
+ARG GRAFANA_VERSION=13.2.5
 
 FROM grafana/grafana:${GRAFANA_VERSION}
 

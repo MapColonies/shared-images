@@ -34,7 +34,7 @@ To update or add new plugins, modify the `plugins.txt` file and rebuild the imag
 Currently, this image includes:
 
 - **Data Sources:** `redis-datasource`, `redis-app`
-- **Panels:** `magnesium-wordcloud-panel`
+- **Panels:** `magnesium-wordcloud-panel`, `mapcolonies-maplibre-panel` (unsigned, from [MapColonies/maplibre-panel](https://github.com/MapColonies/maplibre-panel); Grafana must allow it via `allow_loading_unsigned_plugins`)
 - **Core / App Plugins:** `grafana-pyroscope-app`, `grafana-exploretraces-app`, `grafana-metricsdrilldown-app`, `grafana-lokiexplore-app`
 
 ## Base Image
