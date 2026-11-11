@@ -45,14 +45,3 @@ Currently, this image includes:
 ## Base Image
 
 - `grafana/grafana`
-
-### Grafana 13 upgrade
-
-The Grafana 12.3.1 to 13.2.5 upgrade also updates these bundled app plugins. The versions in `plugins.txt` are pinned to those verified for this upgrade:
-
-| Plugin                       | Grafana 12.3.1 image | Grafana 13.2.5 image |
-| ---------------------------- | -------------------- | -------------------- |
-| grafana-exploretraces-app    | 2.2.1                | 3.2.0                |
-| grafana-lokiexplore-app      | 2.6.0                | 3.1.0                |
-| grafana-metricsdrilldown-app | 2.5.1                | 3.0.0                |
-| grafana-pyroscope-app        | 2.3.1                | 3.1.0                |
