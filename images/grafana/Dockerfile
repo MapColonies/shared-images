@@ -1,13 +1,15 @@
 # https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/#build-a-grafana-docker-image-with-pre-installed-plugins
 # https://github.com/grafana/grafana/blob/main/packaging/docker/custom/Dockerfile
 
-ARG GRAFANA_VERSION=12.3.1
+ARG GRAFANA_VERSION=13.2.5
 
 FROM grafana/grafana:${GRAFANA_VERSION}
 
 ARG GF_GID="0"
 
-ENV GF_PATHS_PLUGINS="/var/lib/grafana-plugins"
+# Plugins are baked into the image; disable runtime preinstallation and updates.
+ENV GF_PATHS_PLUGINS="/var/lib/grafana-plugins" \
+    GF_PLUGINS_PREINSTALL_DISABLED="true"
 
 USER root
 
@@ -34,13 +36,27 @@ RUN set -e; \
       esac; \
       \
       if echo "$plugin" | grep -q ';'; then \
-        # Handle custom plugin URLs (url;folder)
+        # Handle custom plugin URLs (url;folder[;sha256])
         pluginUrl=$(echo "$plugin" | cut -d';' -f 1); \
         pluginInstallFolder=$(echo "$plugin" | cut -d';' -f 2); \
-        grafana cli --pluginUrl "${pluginUrl}" --pluginsDir "${GF_PATHS_PLUGINS}" plugins install "${pluginInstallFolder}"; \
+        pluginSha256=$(echo "$plugin" | cut -d';' -f 3); \
+        if [ -n "$pluginSha256" ]; then \
+          pluginZip=$(mktemp /tmp/grafana-plugin.XXXXXX); \
+          curl --fail --location --silent --show-error "$pluginUrl" --output "$pluginZip"; \
+          echo "$pluginSha256  $pluginZip" | sha256sum -c -; \
+          unzip -q "$pluginZip" -d "$GF_PATHS_PLUGINS"; \
+          rm "$pluginZip"; \
+          test -f "$GF_PATHS_PLUGINS/$pluginInstallFolder/plugin.json"; \
+        else \
+          grafana cli --pluginUrl "${pluginUrl}" --pluginsDir "${GF_PATHS_PLUGINS}" plugins install "${pluginInstallFolder}"; \
+        fi; \
       else \
-        # If the file contains "plugin version" (space separated), map it to "plugin@version"
-        formattedPlugin=$(echo "$plugin" | awk '{if ($2) print $1"@"$2; else print $1}'); \
-        grafana cli --pluginsDir "${GF_PATHS_PLUGINS}" plugins install "${formattedPlugin}"; \
+        # The CLI expects the plugin ID and optional version as separate arguments.
+        read -r pluginId pluginVersion <<< "$plugin"; \
+        if [ -n "$pluginVersion" ]; then \
+          grafana cli --pluginsDir "$GF_PATHS_PLUGINS" plugins install "$pluginId" "$pluginVersion"; \
+        else \
+          grafana cli --pluginsDir "$GF_PATHS_PLUGINS" plugins install "$pluginId"; \
+        fi; \
       fi; \
     done < /tmp/plugins.txt
