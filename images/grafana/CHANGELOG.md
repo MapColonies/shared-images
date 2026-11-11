@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/MapColonies/shared-images/compare/grafana-v1.1.1...grafana-v2.0.0) (2026-11-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **grafana:** Grafana 13 migrates dashboards in the database on first start. Rolling back to a 12.x image requires restoring a pre-upgrade database backup.
+
+### Features
+
+* **grafana:** upgrade to Grafana 13.2.5 and add MapLibre panel plugin (MAPCO-12583) ([#20](https://github.com/MapColonies/shared-images/issues/20)) ([ef68105](https://github.com/MapColonies/shared-images/commit/ef6810518da5132a5af5db743f0291a62fc817ee))
+
 ## [1.1.1](https://github.com/MapColonies/shared-images/compare/grafana-v1.1.0...grafana-v1.1.1) (2026-05-20)
 
 
